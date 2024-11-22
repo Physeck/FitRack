@@ -22,9 +22,9 @@
                 </div>
                 <div class="mb-3">
                     <label for="confirmpassword" class="form-label">Confirm Password</label>
-                    <input type="confirmpassword" class="form-control" id="password" placeholder="Enter your password again">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password again">
                 </div>
-                <button type="submit" class="btn btn-success w-100">Sign Up</button>
+                <a href="/" class="btn btn-success w-100">Sign Up</a>
             </form>
             <div class="mt-3 text-center">
                 <p>Already have an account? <a href="/signin" style="color: #198754">Sign In</a></p>

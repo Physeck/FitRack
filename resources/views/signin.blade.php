@@ -24,7 +24,7 @@
                     <input type="checkbox" class="form-check-input" id="rememberMe">
                     <label class="form-check-label" for="rememberMe">Remember me</label>
                 </div>
-                <button type="submit" class="btn btn-success w-100">Sign In</button>
+                <a href="/" class="btn btn-success w-100">Sign In</a>
             </form>
             <div class="mt-3 text-center">
                 <p>Don't have an account? <a href="/signin" style="color: #198754">Sign Up</a></p>
