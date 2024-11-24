@@ -11,7 +11,8 @@
 
         <div class="bg-light p-5 d-flex flex-column justify-content-center" style="width: 25%;">
             <h2 class="mb-4 text-center">Sign In</h2>
-            <form>
+            <form action="/signin" method="POST">
+                @csrf
                 <div class="mb-3">
                     <label for="email" class="form-label">Email address</label>
                     <input type="email" class="form-control" id="email" placeholder="Enter your email">
