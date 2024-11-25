@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
 
@@ -7,17 +8,21 @@ use App\Http\Controllers\PageController;
 //     return view('welcome');
 // });
 
-Route::get('/signin', function () {
-    return view('signin');
-});
+Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
+Route::post('/signup', [AuthController::class, 'signup'])->name('signup.post');
 
-Route::get('/signup', function () {
-    return view('signup');
-});
+
+
+
+Route::get('/signin', [AuthController::class, 'showSignin'])->name('signin');
+Route::post('/signin', [AuthController::class, 'signin'])->name('signin.post');
+Route::post('/signout', [AuthController::class, 'signout'])->name('signout');
+
 
 Route::get('/', function () {
     return view('home');
 });
+
 
 Route::get('/aboutus', function () {
     return view('aboutus');

@@ -4,7 +4,7 @@
         <ul class="footer-foot">
             <hr>
             <li class="footer-li">
-                <a href="/home" class="footer-a">Home</a>
+                <a href="/" class="footer-a">Home</a>
             </li>
             <li class="footer-li">
                 <a href="/gymplanning" class="footer-a">Workout Plan</a>

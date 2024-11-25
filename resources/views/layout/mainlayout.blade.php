@@ -42,18 +42,18 @@
                 <div class="ms-auto">
                     @auth
                         <span class="navbar-text me-3 text-white">Welcome, {{ Auth::user()->name }}</span>
-                        <a class="btn btn-outline-danger" href="{{ route('logout') }}"
+                        <a class="btn btn-outline-danger" href="{{ route('signout') }}"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             Logout
                         </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        <form id="logout-form" action="{{ route('signout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
                     @endauth
 
                     @guest
                         <a class="btn btn-outline-success" href="/signup" role="button">Sign Up</a>
-                        <a class="btn btn-outline-secondary" style="" href="/signin">Sign in</a>
+                        <a class="btn btn-outline-secondary" style="" href="{{ route('signin') }}">Sign in</a>
                     @endguest
                 </div>
             </div>
