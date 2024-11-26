@@ -4,7 +4,7 @@
 @section('content')
 
     <div class="container" style="padding: 0 1rem 0 1rem">
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center pb-5">
             <img src="{{ Auth::user()->profile_picture ?? asset('images/defaultpfp.png') }}" alt="Profile Picture"
                 class="rounded-circle"
                 style="width: 175px; height: 175px; object-fit: cover; margin-right: 10px; border: 1px solid black">

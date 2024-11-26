@@ -1,8 +1,8 @@
 <div class="footer-wrapper">
     <div class="footer-container">
 
+        <hr >
         <ul class="footer-foot">
-            <hr>
             <li class="footer-li">
                 <a href="/" class="footer-a">Home</a>
             </li>
@@ -18,7 +18,7 @@
             <li class="footer-li">
                 <a href="/aboutus" class="footer-a">About Us</a>
             </li>
-            <hr>
         </ul>
+        <hr>
     </div>
 </div>
