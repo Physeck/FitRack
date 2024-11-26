@@ -41,7 +41,7 @@
                 </ul>
                 <div class="ms-auto">
                     @auth
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center pb-5">
                             <span class="navbar-text me-3 text-white">{{ Auth::user()->name }}</span>
                             <a href="/profile">
                                 <img src="{{ Auth::user()->profile_picture ?? asset('images/defaultpfp.png') }}"
