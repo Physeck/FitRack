@@ -40,4 +40,8 @@ Route::get('/gymplanning', function () {
     return view('gymplanning');
 });
 
+Route::get('/profile', function () {
+    return view('profile');
+});
+
 // Route::get('/coaches/search', [PageController::class, 'search'])->name('coaches.search');

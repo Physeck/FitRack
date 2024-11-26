@@ -41,14 +41,23 @@
                 </ul>
                 <div class="ms-auto">
                     @auth
-                        <span class="navbar-text me-3 text-white">Welcome, {{ Auth::user()->name }}</span>
-                        <a class="btn btn-outline-danger" href="{{ route('signout') }}"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            Logout
-                        </a>
-                        <form id="logout-form" action="{{ route('signout') }}" method="POST" class="d-none">
-                            @csrf
-                        </form>
+                        <div class="d-flex align-items-center">
+                            <span class="navbar-text me-3 text-white">{{ Auth::user()->name }}</span>
+                            <a href="/profile">
+                                <img src="{{ Auth::user()->profile_picture ?? asset('images/defaultpfp.png') }}"
+                                    alt="Profile Picture" class="rounded-circle"
+                                    style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border: 1px solid black">
+                            </a>
+
+                            <a class="btn btn-outline-danger" href="{{ route('signout') }}"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                                Logout
+                            </a>
+                            <form id="logout-form" action="{{ route('signout') }}" method="POST" class="d-none">
+                                @csrf
+                            </form>
+                        </div>
+
                     @endauth
 
                     @guest
