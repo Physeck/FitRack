@@ -27,22 +27,35 @@
                 </div>
             </div>
 
-            {{--
-                <div class="mb-3 d-flex align-items-center">
-                    <label for="name" class="form-label text-white me-3" style="width: 80px;">Name:</label>
-                    <div class="border p-2 rounded" style="background-color: #f8f9fa;">
-                        {{ Auth::user()->name }}
-                    </div>
-                </div>
+            <div class="d-flex justify-content-start">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#changeProfilePictureModal">
+                    Change Profile Picture
+                </button>
+            </div>
 
-                <!-- Email Row -->
-                <div class="mb-3 d-flex align-items-center">
-                    <label for="email" class="form-label text-white me-3" style="width: 80px;">Email:</label>
-                    <div class="border p-2 rounded" style="background-color: #f8f9fa;">
-                        {{ Auth::user()->email }}
+            <div class="modal fade" id="changeProfilePictureModal" tabindex="-1" aria-labelledby="changeProfilePictureModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="changeProfilePictureModalLabel">Change Profile Picture</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <div class="mb-3">
+                                    <label for="profile_picture" class="form-label">Upload New Profile Picture</label>
+                                    <input type="file" name="profile_picture" id="profile_picture" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-success">Update Profile Picture</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            --}}
+            </div>
+
+
+
         </div>
     </div>
 

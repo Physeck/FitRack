@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\UserController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -43,5 +44,6 @@ Route::get('/gymplanning', function () {
 Route::get('/profile', function () {
     return view('profile');
 });
+Route::post('/profile', [UserController::class, 'editProfile'])->name('profile.update');
 
 // Route::get('/coaches/search', [PageController::class, 'search'])->name('coaches.search');
