@@ -19,7 +19,6 @@ class AuthController extends Controller
     }
     public function signin(Request $request)
     {
-        // Validate the form data
         $validate = $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:8',
@@ -44,7 +43,7 @@ class AuthController extends Controller
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']),
+            'password' => bcrypt($validatedData['password']),
         ]);
 
         Auth::login($user);

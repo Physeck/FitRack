@@ -12,18 +12,13 @@ use App\Http\Controllers\UserController;
 Route::get('/signup', [AuthController::class, 'showSignup'])->name('signup');
 Route::post('/signup', [AuthController::class, 'signup'])->name('signup.post');
 
-
-
-
 Route::get('/signin', [AuthController::class, 'showSignin'])->name('signin');
 Route::post('/signin', [AuthController::class, 'signin'])->name('signin.post');
 Route::post('/signout', [AuthController::class, 'signout'])->name('signout');
 
-
 Route::get('/', function () {
     return view('home');
 });
-
 
 Route::get('/aboutus', function () {
     return view('aboutus');
@@ -44,6 +39,8 @@ Route::get('/gymplanning', function () {
 Route::get('/profile', function () {
     return view('profile');
 });
-Route::post('/profile', [UserController::class, 'editProfile'])->name('profile.update');
+Route::post('/profile/updateProfilePage', [UserController::class, 'updateProfilePage'])->name('profile.updateProfilePage');
+Route::post('/profile/updateProfile', [UserController::class, 'editProfile'])->name('profile.updateProfile');
+Route::post('/profile/verifyPassword', [UserController::class, 'verifyPassword'])->name('profile.verifyPassword');
+Route::post('/profile/updatePassword', [UserController::class, 'updatePassword'])->name('profile.updatePassword');
 
-// Route::get('/coaches/search', [PageController::class, 'search'])->name('coaches.search');

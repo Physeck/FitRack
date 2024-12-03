@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FitRack | @yield('title')</title>
     <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
+    <link rel="icon" href="{{ asset('images/fitrack_favicon.png') }}" type="image/x-icon">
 </head>
 
 <body>
@@ -44,9 +46,10 @@
                         <div class="d-flex align-items-center">
                             <span class="navbar-text me-3 text-white">{{ Auth::user()->name }}</span>
                             <a href="/profile">
-                                <img src="{{ Auth::user()->profile_picture ?? asset('images/defaultpfp.png') }}"
+                                <img src="{{ Auth::user()->profile_picture ? asset('uploads/' . Auth::user()->profile_picture) : asset('images/defaultpfp.png') }}"
                                     alt="Profile Picture" class="rounded-circle"
                                     style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border: 1px solid black">
+
                             </a>
 
                             <a class="btn btn-outline-danger" href="{{ route('signout') }}"
@@ -75,6 +78,8 @@
     @include('layout.footer')
 
 </body>
+<script src="{{asset('js/script.js')}}"></script>
 <script src="{{ asset('js/bootstrap.js') }}"></script>
+
 
 </html>
