@@ -44,6 +44,8 @@ class AuthController extends Controller
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
             'password' => bcrypt($validatedData['password']),
+            'height' => 0,
+            'weight' => 0,
         ]);
 
         Auth::login($user);

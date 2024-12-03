@@ -15,7 +15,7 @@
     <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #424549;">
         <div class="container-fluid">
             <a class="navbar-brand user-select-none" style="color: white;">
-                <span style="color: black;">Fit</span><span style="color: whitesmoke;">Rack</span>
+                <span class="fw-bold" style="color: #f97000;">Fit</span><span style="color: whitesmoke;">Rack</span>
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
