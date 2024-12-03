@@ -3,6 +3,7 @@
 
 @section('content')
 
+</div>
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-md-7" style="color: #fff">
@@ -25,7 +26,7 @@
                 </p>
             </div>
             <div class="col-md-5 text-end">
-                <img src="{{ asset('images/cardiogym.jpg') }}" class="rounded img-fluid w-75" alt="Cardio Gym">
+                <img src="{{ asset('images/cardiogym.jpg') }}" class="rounded img-fluid w-100" alt="Cardio Gym">
             </div>
         </div>
     </div>
@@ -53,13 +54,13 @@
             </div>
         </div>
     </div>
-    @auth
-        <div class="container py-3">
-            <h2 class="fw-bold text-center text-white"> Join Us <a href="/signin"
-                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
-                    style="color: #f97000">NOW</a></h3>
-        </div>
-    @endauth
+    @guest
+    <div class="container py-3">
+        <h2 class="fw-bold text-center text-white"> Join Us <a href="/signin"
+            class="link-offset-1 link-underline link-underline-opacity-0 join-link"
+                style="color: #f97000">NOW</a></h3>
+    </div>
+    @endguest
 
 
 

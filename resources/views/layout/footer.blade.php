@@ -2,7 +2,7 @@
     <div class="footer-container">
 
         <ul class="footer-foot">
-            <hr style="margin: 0">
+            <hr class="border border-2" style="margin: 0">
             <li class="footer-li">
                 <a href="/" class="footer-a">Home</a>
             </li>
@@ -18,7 +18,7 @@
             <li class="footer-li">
                 <a href="/aboutus" class="footer-a">About Us</a>
             </li>
-            <hr style="margin: 0">
+            <hr class="border border-2" style="margin: 0">
         </ul>
     </div>
 </div>

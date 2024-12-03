@@ -3,8 +3,8 @@
 
 @section('content')
 
-    <div class="container" style="padding: 0 1rem 0 1rem;">
-        <div class="d-flex align-items-center p-5">
+    <div class="container py-5">
+        <div class="d-flex align-items-center pb-5">
             <img src="{{ Auth::user()->profile_picture ? asset('uploads/' . Auth::user()->profile_picture) : asset('images/defaultpfp.png') }}"
                 alt="Profile Picture" class="rounded-circle"
                 style="width: 175px; height: 175px; object-fit: cover; margin-right: 10px; border: 1px solid black">
@@ -41,7 +41,7 @@
                         style="background-color: #fff;" value="{{ old('weight', Auth::user()->weight) }}">
                 </div>
 
-                <div class="d-flex justify-content-start gap-3">
+                <div class="d-flex justify-content-start gap-3 p-3">
                     <button class="btn btn-success" id="updateProfilePage">
                         Update
                     </button>
