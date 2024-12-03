@@ -3,7 +3,7 @@
 
 @section('content')
 
-    <div class="container" style="padding: 0 1rem 0 1rem; height: 1080px">
+    <div class="container" style="padding: 0 1rem 0 1rem;">
         <div class="d-flex align-items-center p-5">
             <img src="{{ Auth::user()->profile_picture ? asset('uploads/' . Auth::user()->profile_picture) : asset('images/defaultpfp.png') }}"
                 alt="Profile Picture" class="rounded-circle"
