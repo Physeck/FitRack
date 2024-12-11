@@ -32,9 +32,9 @@ Route::get('/mealplanning', function () {
     return view('mealplanning');
 });
 
-Route::get('/gymplanning', function () {
-    return view('gymplanning');
-});
+// Route::get('/gymplanning', function () {
+//     return view('gymplanning');
+// });
 
 Route::get('/profile', function () {
     return view('profile');
@@ -43,4 +43,8 @@ Route::post('/profile/updateProfilePage', [UserController::class, 'updateProfile
 Route::post('/profile/updateProfile', [UserController::class, 'editProfile'])->name('profile.updateProfile');
 Route::post('/profile/verifyPassword', [UserController::class, 'verifyPassword'])->name('profile.verifyPassword');
 Route::post('/profile/updatePassword', [UserController::class, 'updatePassword'])->name('profile.updatePassword');
+Route::get('/gymplanning', [UserController::class, 'showGymPlanner'])->name('gymplanning');
+Route::post('/update_fitness_goal', [UserController::class, 'updateFitnessGoal'])->name('update_fitness_goal');
+Route::get('/mealplanning', [UserController::class, 'showMealPlanner'])->name('mealplanning');
+Route::post('/update_meal_preference', [UserController::class, 'updateMealPreference'])->name('update_meal_preference');
 
