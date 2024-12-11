@@ -47,5 +47,6 @@ Route::get('/gymplanning', [UserController::class, 'showGymPlanner'])->name('gym
 Route::post('/update_fitness_goal', [UserController::class, 'updateFitnessGoal'])->name('update_fitness_goal');
 Route::get('/mealplanning', [UserController::class, 'showMealPlanner'])->name('mealplanning');
 Route::post('/update_meal_preference', [UserController::class, 'updateMealPreference'])->name('update_meal_preference');
-Route::get('/online-trainer', [UserController::class, 'index'])->name('online_trainer');
+Route::get('/onlinecoaching', [UserController::class, 'searchVideos'])->name('onlinecoaching');
+// Route::get('/videos', [UserController::class, 'searchVideos']);
 

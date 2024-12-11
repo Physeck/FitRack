@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use PDO;
 use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
 {
@@ -354,5 +355,88 @@ public function updateFitnessGoal(Request $request)
         ];
 
         return view('onlinecoaching', compact('videos', 'query', 'category'));
+    }
+
+    public function searchVideos(Request $request)
+    {
+        $query = $request->input('q', '');
+        $category = $request->input('category', '');
+        $pageToken = $request->input('pageToken', '');
+        $apiKey = config('app.youtube_api_key');
+        $channelId = 'UCeJFgNahi--FKs0oJyeRDEw';
+
+        $url = 'https://www.googleapis.com/youtube/v3/search';
+
+        // Build query params
+        $params = [
+            'part'       => 'snippet',
+            'q'          => $query,
+            'type'       => 'video',
+            'maxResults' => 9,
+            'channelId' => $channelId,
+            'key'        => $apiKey,
+        ];
+
+        if (!empty($pageToken)) {
+            $params['pageToken'] = $pageToken;
+        }
+
+
+// dd($response->status(), $response->body());
+// dump($apiKey);
+
+        if (!empty($query)) {
+            $params['q'] = $query;
+        }
+        if (!empty($category)) {
+            // If query already exists, append category to it for a more specific search
+            // If no query, just use category alone as a search term
+            $params['q'] = !empty($query) ? ($query . ' ' . $category) : $category;
+        }
+
+        $response = Http::get($url, $params);
+
+        if ($response->failed()) {
+            \Log::error('YouTube API Error', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            return view('onlinecoaching', [
+                'videos' => [],
+                'query' => $query,
+                'category' => $category,
+                'nextPageToken' => null,
+                'prevPageToken' => null,
+            ]);
+        }
+
+        $data = $response->json();
+
+        // Extract tokens for pagination
+        $nextPageToken = $data['nextPageToken'] ?? null;
+        $prevPageToken = $data['prevPageToken'] ?? null;
+
+        // Transform items
+        $videos = [];
+        if (isset($data['items'])) {
+            foreach ($data['items'] as $item) {
+                $videos[] = [
+                    'title'       => html_entity_decode($item['snippet']['title']),
+                    'thumbnail'   => $item['snippet']['thumbnails']['medium']['url'] ?? '',
+                    'videoId'     => $item['id']['videoId'],
+                    'description' => html_entity_decode($item['snippet']['description']),
+                    'publishedAt' => $item['snippet']['publishedAt']
+                ];
+            }
+        }
+
+
+        return view('onlinecoaching', [
+            'query' => $request->input('query', ''),
+            'category' => $request->input('category', ''),
+            'videos' => $videos,
+            'nextPageToken' => $nextPageToken,
+            'prevPageToken' => $prevPageToken,
+        ]);
     }
 }
