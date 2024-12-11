@@ -295,4 +295,64 @@ public function updateFitnessGoal(Request $request)
 
         return redirect()->back()->with('status', 'Meal preference updated successfully!');
     }
+
+    public function index(Request $request) {
+        $query = $request->input('query', '');
+        $category = $request->input('category', '');
+
+        // Here you would use the YouTube Data API client to search videos:
+        // For example (pseudo-code):
+        // $videos = YoutubeAPI::search($query, $category);
+
+        // Placeholder videos array (replace with actual API response)
+        $videos = [
+            (object)[
+                'title' => 'Full Body Workout for Beginners',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'dQw4w9WgXcQ'
+            ],
+            (object)[
+                'title' => '10-Minute Abs Routine',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'abcd1234'
+            ],
+            (object)[
+                'title' => '60-Minute Abs Routine',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'abcd1234'
+            ],
+            (object)[
+                'title' => 'Full Body Workout for Beginners',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'dQw4w9WgXcQ'
+            ],
+            (object)[
+                'title' => '10-Minute Abs Routine',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'abcd1234'
+            ],
+            (object)[
+                'title' => '60-Minute Abs Routine',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'abcd1234'
+            ],
+            (object)[
+                'title' => 'Full Body Workout for Beginners',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'dQw4w9WgXcQ'
+            ],
+            (object)[
+                'title' => '10-Minute Abs Routine',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'abcd1234'
+            ],
+            (object)[
+                'title' => '60-Minute Abs Routine',
+                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
+                'videoId' => 'abcd1234'
+            ],
+        ];
+
+        return view('onlinecoaching', compact('videos', 'query', 'category'));
+    }
 }
