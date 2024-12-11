@@ -41,20 +41,24 @@
                         style="background-color: #fff;" value="{{ old('weight', Auth::user()->weight) }}">
                 </div>
 
+
                 <div class="d-flex justify-content-start gap-3 p-3">
                     <button class="btn btn-success" id="updateProfilePage">
                         Update
                     </button>
-            </form>
 
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#changeProfilePictureModal">
-                Change Profile Picture
-            </button>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                        data-bs-target="#changeProfilePictureModal">
+                        Change Profile Picture
+                    </button>
 
-            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#verifyPasswordModal">
-                Change Password
-            </button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#verifyPasswordModal">
+                        Change Password
+                    </button>
+                </div>
         </div>
+        </form>
 
         <div class="modal fade" id="changeProfilePictureModal" tabindex="-1"
             aria-labelledby="changeProfilePictureModalLabel" aria-hidden="true">
@@ -149,7 +153,6 @@
         <div id="verificationMessage2" class="alert" role="alert-password" style="display: none;"></div>
 
 
-    </div>
     </div>
 
 @endsection
