@@ -12,6 +12,7 @@ use PDO;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Http;
 use DateInterval;
+use Str;
 
 class UserController extends Controller
 {
@@ -368,17 +369,14 @@ public function updateFitnessGoal(Request $request)
 
     public function searchVideos(Request $request)
     {
-        $query = $request->input('q', '');
+        $query = $request->input('query', '');
         $category = $request->input('category', '');
         $pageToken = $request->input('pageToken', '');
         $apiKey = config('app.youtube_api_key');
         $channelId = 'UCeJFgNahi--FKs0oJyeRDEw';
 
-        $minSeconds = 60;
-        $maxSeconds = 6000;
-
         $url = 'https://www.googleapis.com/youtube/v3/search';
-
+        dump($query);
         // Build query params
         $params = [
             'part'       => 'snippet',
@@ -386,7 +384,10 @@ public function updateFitnessGoal(Request $request)
             'type'       => 'video',
             'channelId' => $channelId,
             'key'        => $apiKey,
-            
+            'maxResults' => 9,
+            'videoDuration' => 'medium',
+            'order' => 'relevance',
+             
         ];
 
         if (!empty($pageToken)) {
@@ -405,6 +406,7 @@ public function updateFitnessGoal(Request $request)
             // If no query, just use category alone as a search term
             $params['q'] = !empty($query) ? ($query . ' ' . $category) : $category;
         }
+        // dump($category);
 
         $searchResponse = Http::get('https://www.googleapis.com/youtube/v3/search', $params);
 
@@ -468,34 +470,22 @@ public function updateFitnessGoal(Request $request)
     }
 
     $videosData = $videosResponse->json();
-
-    function iso8601DurationToSeconds($duration) {
-        $interval = new DateInterval($duration);
-        return ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
-    }
     
 
     $filteredVideos = [];
     if (isset($videosData['items'])) {
         foreach ($videosData['items'] as $videoItem) {
-            $duration = $videoItem['contentDetails']['duration'];
-            
-            $seconds = iso8601DurationToSeconds($duration);
-            dump($seconds);
-            if ($seconds >= $minSeconds && $seconds <= $maxSeconds) {
                 $filteredVideos[] = [
                     'title'       => html_entity_decode($videoItem['snippet']['title']),
                     'thumbnail'   => $videoItem['snippet']['thumbnails']['medium']['url'] ?? '',
                     'videoId'     => $videoItem['id'],
-                    'description' => html_entity_decode($videoItem['snippet']['description']),
+                    'description' => Str::limit(html_entity_decode($videoItem['snippet']['description']), 100, '...'),
                     'publishedAt' => $videoItem['snippet']['publishedAt']
                 ];
             }
         }
-    }
 
     $filteredVideos = array_slice($filteredVideos, 0, 9);
-
     return view('onlinecoaching', [
         'query' => $request->input('query', ''),
         'category' => $request->input('category', ''),
