@@ -383,9 +383,9 @@ public function updateFitnessGoal(Request $request)
             'part'       => 'snippet',
             'q'          => $query,
             'type'       => 'video',
-            'maxResults' => 9,
             'channelId' => $channelId,
             'key'        => $apiKey,
+            'maxResults' => 1000,
             
         ];
 
@@ -473,12 +473,15 @@ public function updateFitnessGoal(Request $request)
         $interval = new DateInterval($duration);
         return ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
     }
+    
 
     $filteredVideos = [];
     if (isset($videosData['items'])) {
         foreach ($videosData['items'] as $videoItem) {
             $duration = $videoItem['contentDetails']['duration'];
+            
             $seconds = iso8601DurationToSeconds($duration);
+            dump($seconds);
             if ($seconds >= $minSeconds && $seconds <= $maxSeconds) {
                 $filteredVideos[] = [
                     'title'       => html_entity_decode($videoItem['snippet']['title']),
@@ -490,6 +493,8 @@ public function updateFitnessGoal(Request $request)
             }
         }
     }
+
+    $filteredVideos = array_slice($filteredVideos, 0, 9);
 
     return view('onlinecoaching', [
         'query' => $request->input('query', ''),

@@ -73,7 +73,7 @@
             </div>
         @else
             <div class="col-12">
-                <p>No videos found. Try adjusting your search or filters.</p>
+                <p>No videos found. Try adjusting your search or filters. Query = {{ $query }}</p>
             </div>
         @endif
     </div>
