@@ -15,6 +15,7 @@ return new class extends Migration
             //
             $table->integer('height')->after('profile_picture');
             $table->integer('weight')->after('height');
+            $table->string('gender')->after('weight')->nullable();
         });
     }
 
@@ -27,6 +28,7 @@ return new class extends Migration
             //
             $table->dropColumn('height');
             $table->dropColumn('weight');
+            $table->dropColumn('gender');
         });
     }
 };

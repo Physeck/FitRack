@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use PDO;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Http;
+use DateInterval;
 
 class UserController extends Controller
 {
@@ -90,9 +91,67 @@ class UserController extends Controller
         }
     }
 
+    public function showForm(Request $request)
+    {
+        // If logged in and user already has data, redirect to original page
+        $user = User::find(Auth::id());
+        if ($user) {
+            
+            if ($user->height > 0 && $user->weight > 0 && $user->gender) {
+                return redirect()->intended('gymplanning');
+            }
+        }
+
+        return view('prompt_user_data', [
+            'redirect' => $request->input('redirect', 'gymplanning')
+        ]);
+    }
+
+    public function handleForm(Request $request)
+    {
+        $request->validate([
+            'height' => 'required|numeric|min:1',
+            'weight' => 'required|numeric|min:1',
+            'gender' => 'required|in:male,female,other'
+        ]);
+
+        $height = $request->input('height');
+        $weight = $request->input('weight');
+        $gender = $request->input('gender');
+        $redirect = $request->input('redirect', 'gymplanning');
+        $user = User::find(Auth::id());
+        if ($user) {
+            // User is logged in, directly update their info
+            $user->height = $height;
+            $user->weight = $weight;
+            $user->gender = $gender;
+            $user->save();
+            return redirect()->route($redirect);
+        } else {
+            // User not logged in, store in session and then redirect to login
+            session([
+                'temp_height' => $height,
+                'temp_weight' => $weight,
+                'temp_gender' => $gender,
+                'intended_redirect' => $redirect
+            ]);
+
+            return redirect()->route('login')->with('status', 'Please login or register to save your data.');
+        }
+    }
+
     public function showGymPlanner()
 {
     $user = User::find(Auth::id());
+    // If not logged in, redirect to form
+    if (!$user) {
+        return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
+    }
+
+    // If logged in but missing data
+    if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
+        return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
+    }
 
     $weight = $user->weight; // kg
     $height = $user->height; // cm
@@ -182,6 +241,15 @@ public function updateFitnessGoal(Request $request)
     public function showMealPlanner()
     {
         $user = Auth::user();
+        // If not logged in, redirect to form
+    if (!$user) {
+        return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
+    }
+
+    // If logged in but missing data
+    if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
+        return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
+    }
         $weight = $user->weight;
         $height = $user->height;
         $heightInMeters = $height / 100;
@@ -297,66 +365,6 @@ public function updateFitnessGoal(Request $request)
         return redirect()->back()->with('status', 'Meal preference updated successfully!');
     }
 
-    public function index(Request $request) {
-        $query = $request->input('query', '');
-        $category = $request->input('category', '');
-
-        // Here you would use the YouTube Data API client to search videos:
-        // For example (pseudo-code):
-        // $videos = YoutubeAPI::search($query, $category);
-
-        // Placeholder videos array (replace with actual API response)
-        $videos = [
-            (object)[
-                'title' => 'Full Body Workout for Beginners',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'dQw4w9WgXcQ'
-            ],
-            (object)[
-                'title' => '10-Minute Abs Routine',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'abcd1234'
-            ],
-            (object)[
-                'title' => '60-Minute Abs Routine',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'abcd1234'
-            ],
-            (object)[
-                'title' => 'Full Body Workout for Beginners',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'dQw4w9WgXcQ'
-            ],
-            (object)[
-                'title' => '10-Minute Abs Routine',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'abcd1234'
-            ],
-            (object)[
-                'title' => '60-Minute Abs Routine',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'abcd1234'
-            ],
-            (object)[
-                'title' => 'Full Body Workout for Beginners',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'dQw4w9WgXcQ'
-            ],
-            (object)[
-                'title' => '10-Minute Abs Routine',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'abcd1234'
-            ],
-            (object)[
-                'title' => '60-Minute Abs Routine',
-                'thumbnail' => 'https://via.placeholder.com/320x180?text=Video+Thumbnail',
-                'videoId' => 'abcd1234'
-            ],
-        ];
-
-        return view('onlinecoaching', compact('videos', 'query', 'category'));
-    }
-
     public function searchVideos(Request $request)
     {
         $query = $request->input('q', '');
@@ -364,6 +372,9 @@ public function updateFitnessGoal(Request $request)
         $pageToken = $request->input('pageToken', '');
         $apiKey = config('app.youtube_api_key');
         $channelId = 'UCeJFgNahi--FKs0oJyeRDEw';
+
+        $minSeconds = 60;
+        $maxSeconds = 6000;
 
         $url = 'https://www.googleapis.com/youtube/v3/search';
 
@@ -375,6 +386,7 @@ public function updateFitnessGoal(Request $request)
             'maxResults' => 9,
             'channelId' => $channelId,
             'key'        => $apiKey,
+            
         ];
 
         if (!empty($pageToken)) {
@@ -394,49 +406,97 @@ public function updateFitnessGoal(Request $request)
             $params['q'] = !empty($query) ? ($query . ' ' . $category) : $category;
         }
 
-        $response = Http::get($url, $params);
+        $searchResponse = Http::get('https://www.googleapis.com/youtube/v3/search', $params);
 
-        if ($response->failed()) {
-            \Log::error('YouTube API Error', [
-                'status' => $response->status(),
-                'body' => $response->body(),
-            ]);
-            return view('onlinecoaching', [
-                'videos' => [],
-                'query' => $query,
-                'category' => $category,
-                'nextPageToken' => null,
-                'prevPageToken' => null,
-            ]);
-        }
-
-        $data = $response->json();
-
-        // Extract tokens for pagination
-        $nextPageToken = $data['nextPageToken'] ?? null;
-        $prevPageToken = $data['prevPageToken'] ?? null;
-
-        // Transform items
-        $videos = [];
-        if (isset($data['items'])) {
-            foreach ($data['items'] as $item) {
-                $videos[] = [
-                    'title'       => html_entity_decode($item['snippet']['title']),
-                    'thumbnail'   => $item['snippet']['thumbnails']['medium']['url'] ?? '',
-                    'videoId'     => $item['id']['videoId'],
-                    'description' => html_entity_decode($item['snippet']['description']),
-                    'publishedAt' => $item['snippet']['publishedAt']
-                ];
-            }
-        }
-
-
+    if ($searchResponse->failed()) {
+        \Log::error('YouTube API Error', [
+            'status' => $searchResponse->status(),
+            'body' => $searchResponse->body(),
+        ]);
         return view('onlinecoaching', [
-            'query' => $request->input('query', ''),
-            'category' => $request->input('category', ''),
-            'videos' => $videos,
+            'videos' => [],
+            'query' => $query,
+            'category' => $category,
+            'nextPageToken' => null,
+            'prevPageToken' => null,
+        ]);
+    }
+
+    $data = $searchResponse->json();
+
+    $nextPageToken = $data['nextPageToken'] ?? null;
+    $prevPageToken = $data['prevPageToken'] ?? null;
+
+    $videoIds = [];
+    if (isset($data['items'])) {
+        foreach ($data['items'] as $item) {
+            $videoIds[] = $item['id']['videoId'];
+        }
+    }
+
+    if (empty($videoIds)) {
+        // No videos found, just return empty
+        return view('onlinecoaching', [
+            'videos' => [],
+            'query' => $query,
+            'category' => $category,
             'nextPageToken' => $nextPageToken,
             'prevPageToken' => $prevPageToken,
         ]);
+    }
+
+    // 2. Fetch video details to get durations
+    $videosParams = [
+        'part' => 'snippet,contentDetails',
+        'id' => implode(',', $videoIds),
+        'key' => $apiKey,
+    ];
+
+    $videosResponse = Http::get('https://www.googleapis.com/youtube/v3/videos', $videosParams);
+    if ($videosResponse->failed()) {
+        \Log::error('YouTube API Error (videos)', [
+            'status' => $videosResponse->status(),
+            'body' => $videosResponse->body(),
+        ]);
+        return view('onlinecoaching', [
+            'videos' => [],
+            'query' => $query,
+            'category' => $category,
+            'nextPageToken' => $nextPageToken,
+            'prevPageToken' => $prevPageToken,
+        ]);
+    }
+
+    $videosData = $videosResponse->json();
+
+    function iso8601DurationToSeconds($duration) {
+        $interval = new DateInterval($duration);
+        return ($interval->h * 3600) + ($interval->i * 60) + $interval->s;
+    }
+
+    $filteredVideos = [];
+    if (isset($videosData['items'])) {
+        foreach ($videosData['items'] as $videoItem) {
+            $duration = $videoItem['contentDetails']['duration'];
+            $seconds = iso8601DurationToSeconds($duration);
+            if ($seconds >= $minSeconds && $seconds <= $maxSeconds) {
+                $filteredVideos[] = [
+                    'title'       => html_entity_decode($videoItem['snippet']['title']),
+                    'thumbnail'   => $videoItem['snippet']['thumbnails']['medium']['url'] ?? '',
+                    'videoId'     => $videoItem['id'],
+                    'description' => html_entity_decode($videoItem['snippet']['description']),
+                    'publishedAt' => $videoItem['snippet']['publishedAt']
+                ];
+            }
+        }
+    }
+
+    return view('onlinecoaching', [
+        'query' => $request->input('query', ''),
+        'category' => $request->input('category', ''),
+        'videos' => $filteredVideos,
+        'nextPageToken' => $nextPageToken,
+        'prevPageToken' => $prevPageToken,
+    ]);
     }
 }

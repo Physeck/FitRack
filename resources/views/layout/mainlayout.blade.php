@@ -65,7 +65,7 @@
 
                     @guest
                         <a class="btn btn-outline-success" href="/signup" role="button">Sign Up</a>
-                        <a class="btn btn-outline-secondary" style="" href="{{ route('signin') }}">Sign in</a>
+                        <a class="btn btn-outline-secondary" style="" href="{{ route('login') }}">Sign in</a>
                     @endguest
                 </div>
             </div>

@@ -61,4 +61,24 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect('/signin');
     }
+
+    protected function authenticated(Request $request, $user)
+{
+    if (session()->has('temp_height') && session()->has('temp_weight') && session()->has('temp_gender')) {
+        $user->height = session('temp_height');
+        $user->weight = session('temp_weight');
+        $user->gender = session('temp_gender');
+        $user->save();
+
+        // Clear the temp data
+        session()->forget(['temp_height','temp_weight','temp_gender']);
+
+        // Redirect to intended page
+        $redirect = session('intended_redirect', 'gymplanning');
+        session()->forget('intended_redirect');
+        return redirect()->route($redirect);
+    }
+
+    return redirect()->intended('gymplanning');
+}
 }
