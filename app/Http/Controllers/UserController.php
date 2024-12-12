@@ -96,7 +96,7 @@ class UserController extends Controller
         // If logged in and user already has data, redirect to original page
         $user = User::find(Auth::id());
         if ($user) {
-            
+
             if ($user->height > 0 && $user->weight > 0 && $user->gender) {
                 return redirect()->intended('gymplanning');
             }
@@ -231,8 +231,9 @@ public function updateFitnessGoal(Request $request)
             'fitness_goal' => 'required|in:lose_weight,build_muscle,maintain_health'
         ]);
 
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         $user->fitness_goal = $request->input('fitness_goal');
+        $user = User::find(Auth::id());
         $user->save();
 
         return redirect()->back()->with('status', 'Fitness goal updated successfully!');
@@ -358,7 +359,7 @@ public function updateFitnessGoal(Request $request)
             'diet_preference' => 'required|in:balanced,high_protein,vegetarian'
         ]);
 
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         $user->diet_preference = $request->input('diet_preference');
         $user->save();
 
@@ -386,7 +387,7 @@ public function updateFitnessGoal(Request $request)
             'maxResults' => 9,
             'channelId' => $channelId,
             'key'        => $apiKey,
-            
+
         ];
 
         if (!empty($pageToken)) {
@@ -409,7 +410,7 @@ public function updateFitnessGoal(Request $request)
         $searchResponse = Http::get('https://www.googleapis.com/youtube/v3/search', $params);
 
     if ($searchResponse->failed()) {
-        \Log::error('YouTube API Error', [
+        Log::error('YouTube API Error', [
             'status' => $searchResponse->status(),
             'body' => $searchResponse->body(),
         ]);
@@ -454,7 +455,7 @@ public function updateFitnessGoal(Request $request)
 
     $videosResponse = Http::get('https://www.googleapis.com/youtube/v3/videos', $videosParams);
     if ($videosResponse->failed()) {
-        \Log::error('YouTube API Error (videos)', [
+        Log::error('YouTube API Error (videos)', [
             'status' => $videosResponse->status(),
             'body' => $videosResponse->body(),
         ]);
