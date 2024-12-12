@@ -11,7 +11,7 @@
   --bs-purple: #6f42c1;
   --bs-pink: #d63384;
   --bs-red: #dc3545;
-  --bs-orange: #fd7e14;
+  --bs-orange: #f97000;
   --bs-yellow: #ffc107;
   --bs-green: #198754;
   --bs-teal: #20c997;
@@ -71,6 +71,7 @@
   --bs-dark-border-subtle: #adb5bd;
   --bs-white-rgb: 255, 255, 255;
   --bs-black-rgb: 0, 0, 0;
+  --bs-orange-rgb: 249, 112, 0;
   --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
@@ -157,6 +158,7 @@
   --bs-danger-bg-subtle: #2c0b0e;
   --bs-light-bg-subtle: #343a40;
   --bs-dark-bg-subtle: #1a1d20;
+  
   --bs-primary-border-subtle: #084298;
   --bs-secondary-border-subtle: #41464b;
   --bs-success-border-subtle: #0f5132;
@@ -209,8 +211,84 @@ body {
 
 .gif{
     width: 100%;
-    height: 1040px;
+    height: 100%;
 }
+
+.btn-orange {
+  --bs-btn-color: #fff !important;
+  --bs-btn-bg: #f97000 !important;
+  --bs-btn-border-color: #f97000 !important;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: rgb(249.9, 133.45, 38.25);
+  --bs-btn-hover-border-color: rgb(249.6, 126.3, 25.5) !important;
+  --bs-btn-focus-shadow-rgb: 212, 95, 0;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: rgb(250.2, 140.6, 51);
+  --bs-btn-active-border-color: rgb(249.6, 126.3, 25.5);
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #f97000;
+  --bs-btn-disabled-border-color: #f97000;
+}
+
+.alert-orange {
+  --bs-alert-color: var(--bs-orange-text-emphasis);
+  --bs-alert-bg: var(--bs-orange-bg-subtle);
+  --bs-alert-border-color: var(--bs-orange-border-subtle);
+  --bs-alert-link-color: var(--bs-orange-text-emphasis);
+}
+
+.list-group-item-orange {
+  --bs-list-group-color: var(--bs-orange-text-emphasis);
+  --bs-list-group-bg: var(--bs-orange-bg-subtle);
+  --bs-list-group-border-color: var(--bs-orange-border-subtle);
+  --bs-list-group-action-hover-color: var(--bs-emphasis-color);
+  --bs-list-group-action-hover-bg: var(--bs-orange-border-subtle);
+  --bs-list-group-action-active-color: var(--bs-emphasis-color);
+  --bs-list-group-action-active-bg: var(--bs-orange-border-subtle);
+  --bs-list-group-active-color: var(--bs-orange-bg-subtle);
+  --bs-list-group-active-bg: var(--bs-orange-text-emphasis);
+  --bs-list-group-active-border-color: var(--bs-orange-text-emphasis);
+}
+
+.text-bg-orange {
+  color: #000 !important;
+  background-color: RGBA(var(--bs-orange-rgb), var(--bs-bg-opacity, 1)) !important;
+}
+
+.link-orange {
+  color: RGBA(var(--bs-orange-rgb), var(--bs-link-opacity, 1)) !important;
+  text-decoration-color: RGBA(var(--bs-orange-rgb), var(--bs-link-underline-opacity, 1)) !important;
+}
+.link-orange:hover, .link-orange:focus {
+  color: RGBA(250, 141, 51, var(--bs-link-opacity, 1)) !important;
+  text-decoration-color: RGBA(250, 141, 51, var(--bs-link-underline-opacity, 1)) !important;
+}
+
+.focus-ring-orange {
+  --bs-focus-ring-color: rgba(var(--bs-orange-rgb), var(--bs-focus-ring-opacity));
+}
+
+.border-orange {
+  --bs-border-opacity: 1;
+  border-color: rgba(var(--bs-orange-rgb), var(--bs-border-opacity)) !important;
+}
+
+.text-orange {
+  --bs-text-opacity: 1;
+  color: rgba(var(--bs-orange-rgb), var(--bs-text-opacity)) !important;
+}
+
+.link-underline-orange {
+  --bs-link-underline-opacity: 1;
+  text-decoration-color: rgba(var(--bs-orange-rgb), var(--bs-link-underline-opacity)) !important;
+}
+
+.bg-orange {
+  --bs-bg-opacity: 1;
+  background-color: rgba(var(--bs-orange-rgb), var(--bs-bg-opacity)) !important;
+}
+
 
 ::-webkit-scrollbar{
     width: 12px;
@@ -3380,6 +3458,23 @@ textarea.form-control-lg {
   --bs-gradient: none;
 }
 
+.btn-outline-orange {
+  --bs-btn-color: #f97000;
+  --bs-btn-border-color: #f97000;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #f97000;
+  --bs-btn-hover-border-color: #f97000;
+  --bs-btn-focus-shadow-rgb: 249, 112, 0;
+  --bs-btn-active-color: #000;
+  --bs-btn-active-bg: #f97000;
+  --bs-btn-active-border-color: #f97000;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #f97000;
+  --bs-btn-disabled-bg: transparent;
+  --bs-btn-disabled-border-color: #f97000;
+  --bs-gradient: none;
+}
+
 .btn-link {
   --bs-btn-font-weight: 400;
   --bs-btn-color: var(--bs-link-color);
@@ -3901,7 +3996,7 @@ textarea.form-control-lg {
   }
 }
 .nav-link:hover, .nav-link:focus {
-  color: #6c757d;
+  color: #f97000;
 }
 .nav-link:focus-visible {
   outline: 0;
@@ -4009,14 +4104,14 @@ textarea.form-control-lg {
   --bs-navbar-padding-x: 0;
   --bs-navbar-padding-y: 0.5rem;
   --bs-navbar-color: rgba(var(--bs-emphasis-color-rgb), 0.65);
-  --bs-navbar-hover-color: rgba(var(--bs-emphasis-color-rgb), 0.8);
+  --bs-navbar-hover-color: rgba(var(--bs-orange-rgb), 0.8);
   --bs-navbar-disabled-color: rgba(var(--bs-emphasis-color-rgb), 0.3);
-  --bs-navbar-active-color: rgba(var(--bs-emphasis-color-rgb), 1);
+  --bs-navbar-active-color: rgba(var(--bs-orange-rgb), 1);
   --bs-navbar-brand-padding-y: 0.3125rem;
   --bs-navbar-brand-margin-end: 1rem;
   --bs-navbar-brand-font-size: 1.25rem;
   --bs-navbar-brand-color: rgba(var(--bs-emphasis-color-rgb), 1);
-  --bs-navbar-brand-hover-color: rgba(var(--bs-emphasis-color-rgb), 1);
+  --bs-navbar-brand-hover-color: rgba(var(--bs-orange-rgb), 1);
   --bs-navbar-nav-link-padding-x: 0.5rem;
   --bs-navbar-toggler-padding-y: 0.25rem;
   --bs-navbar-toggler-padding-x: 0.75rem;
@@ -4422,7 +4517,7 @@ textarea.form-control-lg {
   --bs-navbar-color: rgba(255, 255, 255, 0.55);
   --bs-navbar-hover-color: rgba(255, 255, 255, 0.75);
   --bs-navbar-disabled-color: rgba(255, 255, 255, 0.25);
-  --bs-navbar-active-color: #fff;
+  --bs-navbar-active-color: #f97000;
   --bs-navbar-brand-color: #fff;
   --bs-navbar-brand-hover-color: #fff;
   --bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.1);

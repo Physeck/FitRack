@@ -12,7 +12,7 @@ use PDO;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Http;
 use DateInterval;
-use Str;
+use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
@@ -376,7 +376,7 @@ public function updateFitnessGoal(Request $request)
         $channelId = 'UCeJFgNahi--FKs0oJyeRDEw';
 
         $url = 'https://www.googleapis.com/youtube/v3/search';
-        dump($query);
+        // dump($query);
         // Build query params
         $params = [
             'part'       => 'snippet',

@@ -1,4 +1,4 @@
-<div class="footer-wrapper">
+<div class="footer-wrapper position-relative" style="z-index: 10;">
     <div class="footer-container">
 
         <ul class="footer-foot">

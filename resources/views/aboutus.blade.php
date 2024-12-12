@@ -2,8 +2,6 @@
 @section('title', 'AboutUs')
 
 @section('content')
-
-</div>
     <div class="container py-5">
         <div class="row align-items-center">
             <div class="col-md-7" style="color: #fff">
