@@ -41,7 +41,7 @@ class UserController extends Controller
 
             return redirect()->back()->with('success', 'Profile picture updated successfully!');
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error : ' + $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error : ' . $e->getMessage());
         }
     }
 
