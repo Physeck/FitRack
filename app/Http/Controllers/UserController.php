@@ -16,7 +16,7 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    //
+    //test
     public function editProfile(Request $request)
     {
         try {
@@ -387,7 +387,7 @@ public function updateFitnessGoal(Request $request)
             'maxResults' => 9,
             'videoDuration' => 'medium',
             'order' => 'relevance',
-             
+
         ];
 
         if (!empty($pageToken)) {
@@ -470,7 +470,7 @@ public function updateFitnessGoal(Request $request)
     }
 
     $videosData = $videosResponse->json();
-    
+
 
     $filteredVideos = [];
     if (isset($videosData['items'])) {
