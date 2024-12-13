@@ -43,7 +43,7 @@
                             <div class="position-relative h-100">
                                 <h5 class="card-title">{{ $video['title'] }}</h5>
                                 <p class="card-text mb-5">{{ $video['description'] }}</p>
-                                <a href="https://www.youtube.com/watch?v={{ $video['videoId'] }}" target="_blank" class="btn btn-success position-absolute bottom-0 start-0">Watch Now</a>
+                                <a href="https://www.youtube.com/watch?v={{ $video['videoId'] }}" target="_blank" class="btn btn-orange position-absolute bottom-0 start-0">Watch Now</a>
 </div>
                         </div>
                     </div>
