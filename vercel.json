@@ -6,8 +6,12 @@
     },
     "routes": [
         {
-            "src": "/(css|js)/(.*)$",
+            "src": "/(css|js|videos|images|uploads)/(.*)$",
             "dest": "/api/assets.php?type=$1&file=$2"
+        },
+        {
+            "src": "/(css|js|videos|images|uploads)/(.*)$",
+            "dest": "/public/$1/$2"
         },
         {
             "src": "/(.*)",
