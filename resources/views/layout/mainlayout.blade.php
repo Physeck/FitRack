@@ -7,8 +7,8 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>FitRack | @yield('title')</title>
-    <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}">
-    <!-- <link rel="stylesheet" href="{{ asset('css/custom.css') }}"> -->
+    {{-- <link rel="stylesheet" href="{{ asset('css/bootstrap.css') }}"> --}}
+    <link rel="stylesheet" href="public/css/bootstrap.css">
     <link rel="icon" href="{{ asset('images/fitrack_favicon.png') }}" type="image/x-icon">
 </head>
 
