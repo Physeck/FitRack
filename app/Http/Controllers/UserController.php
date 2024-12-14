@@ -31,11 +31,12 @@ class UserController extends Controller
 
 
                 // Make the API request to upload the file
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . env('BLOB_READ_WRITE_TOKEN'),
-                ])->attach(
-                    'file', $fileContents, $filename
-                )->post('https://api.vercel.com/v2/blob/upload');
+                $response = Http::withToken(env('BLOB_READ_WRITE_TOKEN'))
+                ->post('https://api.vercel.com/v2/blob/upload', [
+                    'file' => base64_encode($fileContent), // Convert the file content to base64
+                    'fileName' => $fileName,
+                    'contentType' => $file->getMimeType(),
+                ]);
 
                 if ($response->successful()) {
                     $blobData = $response->json();
@@ -43,12 +44,10 @@ class UserController extends Controller
                     // Save the blob URL or ID to your user's profile
                     $user = User::find(Auth::id());
                     if ($user->profile_picture) {
-                        // Delete the old profile picture from Vercel Blob (if necessary)
-                        $deleteResponse = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . env('BLOB_READ_WRITE_TOKEN'),
-                        ])->delete('https://api.vercel.com/v2/blob/delete', [
-                            'blobId' => $user->profile_picture_blob_id, // Assuming you're storing the blob ID
-                        ]);
+                        $blobUrl = $user->profile_picture;
+                        $blobId = basename($blobUrl);
+                        $deleteResponse = Http::withToken(env('BLOB_READ_WRITE_TOKEN'))
+                ->delete("https://api.vercel.com/v2/blob/$blobId");
 
                         if (!$deleteResponse->successful()) {
                             throw new \Exception('Failed to delete old profile picture from Vercel Blob.');
