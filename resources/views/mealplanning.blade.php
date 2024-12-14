@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="container mt-4">
-    <h1 class="mb-4">Your Personalized Meal Planner</h1>
+    <h1 class="mb-4 text-white">Meal Planner</h1>
     <div class="card mb-4">
         <div class="card-body">
             <p><strong>Weight:</strong> {{ $user->weight }} kg</p>
@@ -28,7 +28,7 @@
                         <option value="vegetarian" {{ $dietPreference == 'vegetarian' ? 'selected' : '' }}>Vegetarian</option>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Update Preference</button>
+                <button type="submit" class="btn btn-orange">Update Preference</button>
             </form>
             @if(session('status'))
                 <div class="alert alert-success mt-3">{{ session('status') }}</div>
@@ -38,10 +38,10 @@
 
     <!-- Personalized Meal Recommendations -->
     <div class="card mb-4">
-        <div class="card-header">Your Personalized Nutrition Guidance</div>
+        <div class="card-header">Nutrition Guidance</div>
         <div class="card-body">
             <p>{{ $recommendations['message'] }}</p>
-            <h5>Example Meal Ideas</h5>
+            <h5>Meal Recommendation</h5>
             <div class="row">
                 @foreach($recommendations['meals'] as $mealType => $mealList)
                     <div class="col-md-3 mb-3">
