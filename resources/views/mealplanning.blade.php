@@ -5,7 +5,7 @@
 
 <div class="container mt-4">
     <h1 class="mb-4 text-white">Meal Planner</h1>
-    <div class="card mb-4">
+    <div class="card mb-4" style="background-color: rgba(255, 255, 255, 0.75) !important;">
         <div class="card-body">
             <p><strong>Weight:</strong> {{ $user->weight }} kg</p>
             <p><strong>Height:</strong> {{ $user->height }} cm</p>
@@ -15,14 +15,14 @@
     </div>
 
     <!-- Update Meal Preference -->
-    <div class="card mb-4">
+    <div class="card mb-4" style="background-color: rgba(255, 255, 255, 0.75) !important;">
         <div class="card-header">Your Diet Preference</div>
         <div class="card-body">
             <form method="POST" action="{{ route('update_meal_preference') }}">
                 @csrf
                 <div class="mb-3">
                     <label for="dietPreference" class="form-label">Choose a Diet Type</label>
-                    <select name="diet_preference" class="form-select" id="dietPreference">
+                    <select name="diet_preference" class="form-select" id="dietPreference" style="background-color: rgba(255, 255, 255, 0.75) !important;">
                         <option value="balanced" {{ $dietPreference == 'balanced' ? 'selected' : '' }}>Balanced</option>
                         <option value="high_protein" {{ $dietPreference == 'high_protein' ? 'selected' : '' }}>High Protein</option>
                         <option value="vegetarian" {{ $dietPreference == 'vegetarian' ? 'selected' : '' }}>Vegetarian</option>
@@ -37,7 +37,7 @@
     </div>
 
     <!-- Personalized Meal Recommendations -->
-    <div class="card mb-4">
+    <div class="card mb-4" style="background-color: rgba(255, 255, 255, 0.75) !important;">
         <div class="card-header">Nutrition Guidance</div>
         <div class="card-body">
             <p>{{ $recommendations['message'] }}</p>
