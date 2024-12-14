@@ -33,7 +33,7 @@ class UserController extends Controller
                 // Make the API request to upload the file
                 $response = Http::withToken(env('BLOB_READ_WRITE_TOKEN'))
                 ->post('https://api.vercel.com/v2/blob/upload', [
-                    'file' => base64_encode($fileContent), // Convert the file content to base64
+                    'file' => base64_encode($fileContents), // Convert the file content to base64
                     'fileName' => $fileName,
                     'contentType' => $file->getMimeType(),
                 ]);
