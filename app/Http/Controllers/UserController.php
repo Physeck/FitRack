@@ -24,25 +24,50 @@ class UserController extends Controller
                 'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             ]);
 
-            $user = User::find(Auth::id());
+                $file = $request->file('profile_picture');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $fileContents = file_get_contents($file->getRealPath());
 
-            if ($user->profile_picture) {
-                if (file_exists(public_path('uploads/' . $user->profile_picture))) {
-                    unlink(public_path('uploads/' . $user->profile_picture));
+                // Vercel Blob API endpoint
+                $endpoint = 'https://api.vercel.com/v2/blob/upload';
+
+                // Make the API request to upload the file
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . env('VERCEL_BLOB_TOKEN'),
+                    'Content-Type' => $file->getMimeType(),
+                ])->post($endpoint, [
+                    'file' => base64_encode($fileContents),
+                    'fileName' => $fileName,
+                ]);
+
+                if ($response->successful()) {
+                    $blobData = $response->json();
+
+                    // Save the blob URL or ID to your user's profile
+                    $user = User::find(Auth::id());
+                    if ($user->profile_picture) {
+                        // Delete the old profile picture from Vercel Blob (if necessary)
+                        $deleteResponse = Http::withHeaders([
+                            'Authorization' => 'Bearer ' . env('VERCEL_BLOB_TOKEN'),
+                        ])->delete('https://api.vercel.com/v2/blob/delete', [
+                            'blobId' => $user->profile_picture_blob_id, // Assuming you're storing the blob ID
+                        ]);
+
+                        if (!$deleteResponse->successful()) {
+                            throw new \Exception('Failed to delete old profile picture from Vercel Blob.');
+                        }
+                    }
+                    $user->profile_picture = $blobData['url']; // Adjust based on actual response structure
+                    $user->save();
+
+                    return redirect()->back()->with('success', 'Profile picture updated successfully.');
+                } else {
+                    return redirect()->back()->with('error', 'Failed to upload profile picture to Vercel Blob.');
                 }
+
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error: ' . $e->getMessage());
             }
-
-            $file = $request->file('profile_picture');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads'), $filename);
-
-            $user->profile_picture = $filename;
-            $user->save();
-
-            return redirect()->back()->with('success', 'Profile picture updated successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error : ' . $e->getMessage());
-        }
     }
 
     public function verifyPassword(Request $request)
