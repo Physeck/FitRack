@@ -50,7 +50,7 @@
                     @enderror
                 </div>
 
-                <button class="btn btn-success w-100">Sign Up</button>
+                <button class="btn btn-orange w-100">Sign Up</button>
             </form>
 
             <div class="mt-3 text-center">

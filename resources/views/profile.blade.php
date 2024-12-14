@@ -43,11 +43,11 @@
 
 
                 <div class="d-flex justify-content-start gap-3 p-3">
-                    <button class="btn btn-success" id="updateProfilePage">
+                    <button class="btn btn-orange" id="updateProfilePage">
                         Update
                     </button>
 
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-orange" data-bs-toggle="modal"
                         data-bs-target="#changeProfilePictureModal">
                         Change Profile Picture
                     </button>
@@ -75,7 +75,7 @@
                                 <label for="profile_picture" class="form-label">Upload New Profile Picture</label>
                                 <input type="file" name="profile_picture" id="profile_picture" class="form-control">
                             </div>
-                            <button type="submit" class="btn btn-success">Update Profile Picture</button>
+                            <button type="submit" class="btn btn-orange">Update Profile Picture</button>
                         </form>
                     </div>
                 </div>
@@ -110,7 +110,7 @@
                                 <label for="currentPassword" class="form-label">Enter Current Password</label>
                                 <input type="password" name="currentPassword" id="currentPassword" class="form-control">
                             </div>
-                            <button type="button" class="btn btn-success" id="verifyPasswordButton">Verify</button>
+                            <button type="button" class="btn btn-orange" id="verifyPasswordButton">Verify</button>
                         </form>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                                 <input type="password" name="newPassword_confirmation" id="newPassword_confirmation"
                                     class="form-control" required>
                             </div>
-                            <button type="button" class="btn btn-success" id="submitChangePassword">Change
+                            <button type="button" class="btn btn-orange" id="submitChangePassword">Change
                                 Password</button>
                         </form>
                     </div>
