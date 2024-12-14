@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h1 class="mb-4">Your Personalized Gym Plan</h1>
+    <h1 class="mb-4" style="color: #fff">Your Personalized Gym Plan</h1>
     <div class="row mb-4">
         <div class="col-md-12">
             <!-- User Info & BMI -->

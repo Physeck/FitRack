@@ -4,7 +4,7 @@
 @section('content')
 
 <div class="container mt-4">
-    <h1 class="mb-4">Your Personalized Meal Planner</h1>
+    <h1 class="mb-4" style="color: #fff">Your Personalized Meal Planner</h1>
     <div class="card mb-4">
         <div class="card-body">
             <p><strong>Weight:</strong> {{ $user->weight }} kg</p>
