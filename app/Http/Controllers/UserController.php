@@ -43,7 +43,10 @@ class UserController extends Controller
         $fileName = 'profile_pictures/' . time() . '_' . $file->getClientOriginalName();
 
         // Upload the new profile picture to S3
-        Storage::disk('s3')->put($fileName, file_get_contents($file->getRealPath()), 'public');
+        $result = Storage::disk('s3')->put($fileName, file_get_contents($file->getRealPath()), 'public');
+        if (!$result) {
+            return redirect()->back()->with('error','Failed to upload the file to S3.');
+        }
 
         // Get the public URL for the uploaded file
         $url = Storage::disk('s3')->url($fileName);
