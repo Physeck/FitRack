@@ -25,58 +25,48 @@ class UserController extends Controller
             'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // Retrieve the authenticated user
-        $user = User::find(Auth::id());
+                $file = $request->file('profile_picture');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $fileContents = file_get_contents($file->getRealPath());
 
-        // If the user already has a profile picture, remove it (Optional: can decide based on use case)
-        if ($user->profile_picture) {
-            // Extract the file identifier or URL
-            $blobUrl = $user->profile_picture;
 
-            // Parse the identifier (this depends on how Vercel Blob URLs are structured)
-            $blobId = basename($blobUrl); // Assumes the file name or ID is the last part of the URL
+                // Make the API request to upload the file
+                $response = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . env('VERCEL_BLOB_TOKEN'),
+                ])->attach(
+                    'file', $fileContents, $filename
+                )->post('https://api.vercel.com/v2/blob/upload');
 
-            // Make a request to delete the file from Vercel Blob
-            $deleteResponse = Http::withToken(env('VERCEL_BLOB_API_TOKEN'))
-                ->delete("https://api.vercel.com/v2/blob/$blobId");
+                if ($response->successful()) {
+                    $blobData = $response->json();
 
-            if ($deleteResponse->failed()) {
-                // Handle error gracefully, perhaps log it
-                Log::error('Failed to delete old profile picture from Vercel Blob.');
+                    // Save the blob URL or ID to your user's profile
+                    $user = User::find(Auth::id());
+                    if ($user->profile_picture) {
+                        // Delete the old profile picture from Vercel Blob (if necessary)
+                        $deleteResponse = Http::withHeaders([
+                            'Authorization' => 'Bearer ' . env('VERCEL_BLOB_TOKEN'),
+                        ])->delete('https://api.vercel.com/v2/blob/delete', [
+                            'blobId' => $user->profile_picture_blob_id, // Assuming you're storing the blob ID
+                        ]);
+
+                        if (!$deleteResponse->successful()) {
+                            throw new \Exception('Failed to delete old profile picture from Vercel Blob.');
+                        }
+                    }
+                    $user->profile_picture = $blobData['url']; // Adjust based on actual response structure
+                    $user->save();
+
+                    return redirect()->back()->with('success', 'Profile picture updated successfully.');
+                } else {
+                    logger('Vercel Blob Upload Error:', $response->json());
+                    return redirect()->back()->with('error', 'Failed to upload profile picture to Vercel Blob. Error: ' . $response->body());
+                }
+
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error: ' . $e->getMessage());
             }
-        }
-
-
-        // Handle the new file upload
-        $file = $request->file('profile_picture');
-        $fileContent = file_get_contents($file->getRealPath());
-        $fileName = time() . '_' . $file->getClientOriginalName();
-
-        // Send the file to Vercel Blob
-        $response = Http::withToken(env('VERCEL_BLOB_API_TOKEN')) // Ensure you set this in your .env file
-            ->post('https://api.vercel.com/v2/blob/upload', [
-                'file' => base64_encode($fileContent),
-                'fileName' => $fileName,
-                'contentType' => $file->getMimeType(),
-            ]);
-
-        if ($response->failed()) {
-            return redirect()->back()->with('error', 'Failed to upload profile picture to storage. Please try again.');
-        }
-
-        // Get the uploaded file's URL
-        $blobUrl = $response->json()['url'];
-
-        // Update the user's profile picture URL
-        $user->profile_picture = $blobUrl;
-        $user->save();
-
-        return redirect()->back()->with('success', 'Profile picture updated successfully!');
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error: ' . $e->getMessage());
     }
-}
-
 
     public function verifyPassword(Request $request)
     {
