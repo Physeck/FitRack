@@ -32,7 +32,7 @@ class UserController extends Controller
 
                 // Make the API request to upload the file
                 $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . env('VERCEL_BLOB_TOKEN'),
+                    'Authorization' => 'Bearer ' . env('BLOB_READ_WRITE_TOKEN'),
                 ])->attach(
                     'file', $fileContents, $filename
                 )->post('https://api.vercel.com/v2/blob/upload');
@@ -45,7 +45,7 @@ class UserController extends Controller
                     if ($user->profile_picture) {
                         // Delete the old profile picture from Vercel Blob (if necessary)
                         $deleteResponse = Http::withHeaders([
-                            'Authorization' => 'Bearer ' . env('VERCEL_BLOB_TOKEN'),
+                            'Authorization' => 'Bearer ' . env('BLOB_READ_WRITE_TOKEN'),
                         ])->delete('https://api.vercel.com/v2/blob/delete', [
                             'blobId' => $user->profile_picture_blob_id, // Assuming you're storing the blob ID
                         ]);
