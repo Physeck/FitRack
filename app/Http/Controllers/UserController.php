@@ -28,17 +28,13 @@ class UserController extends Controller
                 $filename = time() . '_' . $file->getClientOriginalName();
                 $fileContents = file_get_contents($file->getRealPath());
 
-                // Vercel Blob API endpoint
-                $endpoint = 'https://api.vercel.com/v2/blob/upload';
 
                 // Make the API request to upload the file
                 $response = Http::withHeaders([
                     'Authorization' => 'Bearer ' . env('VERCEL_BLOB_TOKEN'),
-                    'Content-Type' => $file->getMimeType(),
-                ])->post($endpoint, [
-                    'file' => base64_encode($fileContents),
-                    'fileName' => $filename,
-                ]);
+                ])->attach(
+                    'file', $fileContents, $filename
+                )->post('https://api.vercel.com/v2/blob/upload');
 
                 if ($response->successful()) {
                     $blobData = $response->json();
@@ -62,7 +58,8 @@ class UserController extends Controller
 
                     return redirect()->back()->with('success', 'Profile picture updated successfully.');
                 } else {
-                    return redirect()->back()->with('error', 'Failed to upload profile picture to Vercel Blob.');
+                    logger('Vercel Blob Upload Error:', $uploadResponse->json());
+                    return redirect()->back()->with('error', 'Failed to upload profile picture to Vercel Blob. Error: ' . $uploadResponse->body());
                 }
 
             } catch (\Exception $e) {
