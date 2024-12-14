@@ -214,24 +214,35 @@ class UserController extends Controller
             $message .= ' Since you want to lose weight, prioritize moderate-intensity cardio and a well-structured strength routine that supports fat loss while preserving muscle.';
             $weeklyPlan = [
                 'Monday' => '30 mins moderate cardio (jog, bike) + light core work',
-                'Tuesday' => 'Upper body strength (light to moderate weights, 8-12 reps)',
-                'Thursday' => '30 mins low-impact cardio (brisk walk, elliptical)',
-                'Friday' => 'Lower body strength (bodyweight squats, lunges, glute bridges)',
+            'Tuesday' => 'Upper body strength (light to moderate weights, 8-12 reps)',
+            'Wednesday' => 'Yoga or active recovery (light stretching, short walk)',
+            'Thursday' => '30 mins low-impact cardio (brisk walk, elliptical)',
+            'Friday' => 'Lower body strength (bodyweight squats, lunges, glute bridges)',
+            'Saturday' => 'Moderate cardio (bike or jog) + mobility drills',
+            'Sunday' => 'Rest day (light stretching or a leisure walk)',
             ];
         } elseif ($fitnessGoal === 'build_muscle') {
             $message .= ' Since you want to build muscle, focus on progressive strength training with a balance of compound exercises and adequate rest.';
             $weeklyPlan = [
                 'Monday' => 'Upper body strength (bench press, rows, overhead press)',
-                'Wednesday' => 'Lower body strength (squats, deadlifts, lunges)',
-                'Friday' => 'Full body session (pull-ups, push-ups, hip thrusts)',
+            'Tuesday' => 'Light cardio or active recovery (short walk or easy cycling)',
+            'Wednesday' => 'Lower body strength (squats, deadlifts, lunges)',
+            'Thursday' => 'Core and accessory work (pull-ups, push-ups, hip thrusts)',
+            'Friday' => 'Full body strength session (compound lifts, moderate reps)',
+            'Saturday' => 'Light active recovery (yoga or mobility work)',
+            'Sunday' => 'Rest day',
             ];
         } else {
             // maintain_health
             $message .= ' To maintain your current health, mix moderate cardio and full-body strength workouts evenly.';
             $weeklyPlan = [
-                'Tuesday' => 'Light cardio (20-30 mins) + core exercises',
-                'Thursday' => 'Full body strength (moderate weights, 8-10 reps)',
-                'Saturday' => 'Yoga or pilates for flexibility and balance',
+                'Monday' => 'Light cardio (20-30 mins) + core exercises',
+                'Tuesday' => 'Full body strength (moderate weights, 8-10 reps)',
+                'Wednesday' => 'Yoga or pilates for flexibility and balance',
+                'Thursday' => 'Moderate cardio (jog or cycle)',
+                'Friday' => 'Upper body strength (moderate weights)',
+                'Saturday' => 'Lower body strength + core work',
+                'Sunday' => 'Rest day (leisure walk or gentle stretching)',
             ];
         }
 
