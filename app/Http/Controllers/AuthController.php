@@ -9,12 +9,13 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
-
-    public function showSignin(){
+    public function showSignin()
+    {
         return view('signin');
     }
 
-    public function showSignup(){
+    public function showSignup()
+    {
         return view('signup');
     }
     public function signin(Request $request)
@@ -33,7 +34,8 @@ class AuthController extends Controller
         }
     }
 
-    public function signup(Request $request){
+    public function signup(Request $request)
+    {
         $validatedData = $request->validate([
             'name' => 'required|string|max:30',
             'email' => 'required|email|unique:users,email|max:255',
@@ -46,13 +48,13 @@ class AuthController extends Controller
             'password' => bcrypt($validatedData['password']),
             'height' => 0,
             'weight' => 0,
+            'gender' => 'Male',
         ]);
 
         Auth::login($user);
 
         return redirect('/');
     }
-
 
     public function signout(Request $request)
     {
@@ -63,22 +65,22 @@ class AuthController extends Controller
     }
 
     protected function authenticated(Request $request, $user)
-{
-    if (session()->has('temp_height') && session()->has('temp_weight') && session()->has('temp_gender')) {
-        $user->height = session('temp_height');
-        $user->weight = session('temp_weight');
-        $user->gender = session('temp_gender');
-        $user->save();
+    {
+        if (session()->has('temp_height') && session()->has('temp_weight') && session()->has('temp_gender')) {
+            $user->height = session('temp_height');
+            $user->weight = session('temp_weight');
+            $user->gender = session('temp_gender');
+            $user->save();
 
-        // Clear the temp data
-        session()->forget(['temp_height','temp_weight','temp_gender']);
+            // Clear the temp data
+            session()->forget(['temp_height', 'temp_weight', 'temp_gender']);
 
-        // Redirect to intended page
-        $redirect = session('intended_redirect', 'gymplanning');
-        session()->forget('intended_redirect');
-        return redirect()->route($redirect);
+            // Redirect to intended page
+            $redirect = session('intended_redirect', 'gymplanning');
+            session()->forget('intended_redirect');
+            return redirect()->route($redirect);
+        }
+
+        return redirect()->intended('gymplanning');
     }
-
-    return redirect()->intended('gymplanning');
-}
 }

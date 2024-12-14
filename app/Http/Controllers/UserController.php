@@ -81,8 +81,8 @@ class UserController extends Controller
 
             $user = User::find(Auth::id());
             $user->update([
-               'height' => $request->input('height'),
-               'weight' => $request->input('weight'),
+                'height' => $request->input('height'),
+                'weight' => $request->input('weight'),
             ]);
 
             return redirect()->back()->with('success', 'Profile updated successfully!');
@@ -97,14 +97,13 @@ class UserController extends Controller
         // If logged in and user already has data, redirect to original page
         $user = User::find(Auth::id());
         if ($user) {
-
             if ($user->height > 0 && $user->weight > 0 && $user->gender) {
                 return redirect()->intended('gymplanning');
             }
         }
 
         return view('prompt_user_data', [
-            'redirect' => $request->input('redirect', 'gymplanning')
+            'redirect' => $request->input('redirect', 'gymplanning'),
         ]);
     }
 
@@ -113,7 +112,7 @@ class UserController extends Controller
         $request->validate([
             'height' => 'required|numeric|min:1',
             'weight' => 'required|numeric|min:1',
-            'gender' => 'required|in:male,female,other'
+            'gender' => 'required|in:male,female,other',
         ]);
 
         $height = $request->input('height');
@@ -134,7 +133,7 @@ class UserController extends Controller
                 'temp_height' => $height,
                 'temp_weight' => $weight,
                 'temp_gender' => $gender,
-                'intended_redirect' => $redirect
+                'intended_redirect' => $redirect,
             ]);
 
             return redirect()->route('login')->with('status', 'Please login or register to save your data.');
@@ -142,94 +141,95 @@ class UserController extends Controller
     }
 
     public function showGymPlanner()
-{
-    $user = User::find(Auth::id());
-    // If not logged in, redirect to form
-    if (!$user) {
-        return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
+    {
+        $user = User::find(Auth::id());
+        // If not logged in, redirect to form
+        if (!$user) {
+            return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
+        }
+
+        // If logged in but missing data
+        if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
+            return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
+        }
+
+        $weight = $user->weight; // kg
+        $height = $user->height; // cm
+        $heightInMeters = $height / 100;
+        $bmi = $weight / ($heightInMeters * $heightInMeters);
+        $bmi = round($bmi, 1);
+
+        // Determine BMI category
+        $bmiCategory = '';
+        if ($bmi < 18.5) {
+            $bmiCategory = 'underweight';
+        } elseif ($bmi < 25) {
+            $bmiCategory = 'normal';
+        } else {
+            $bmiCategory = 'overweight';
+        }
+
+        // Retrieve user’s fitness goal if stored, or default to something
+        $fitnessGoal = $user->fitness_goal ?? 'maintain_health'; // e.g., 'lose_weight', 'build_muscle', 'maintain_health'
+
+        // Generate personalized recommendations based on BMI category and fitness goal
+        $recommendations = $this->generateRecommendations($bmiCategory, $fitnessGoal);
+
+        return view('gymplanning', compact('user', 'bmi', 'bmiCategory', 'fitnessGoal', 'recommendations'));
     }
 
-    // If logged in but missing data
-    if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
-        return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
-    }
+    private function generateRecommendations($bmiCategory, $fitnessGoal)
+    {
+        // This is a simplified logic. You can expand as needed.
+        $message = '';
+        $weeklyPlan = [];
 
-    $weight = $user->weight; // kg
-    $height = $user->height; // cm
-    $heightInMeters = $height / 100;
-    $bmi = $weight / ($heightInMeters * $heightInMeters);
-    $bmi = round($bmi, 1);
+        // Base messages
+        if ($bmiCategory === 'underweight') {
+            $message = 'You’re currently underweight. To improve strength and gain healthy weight, focus on controlled strength training and a slightly higher calorie intake.';
+        } elseif ($bmiCategory === 'normal') {
+            $message = 'You’re at a healthy weight. Maintain a balanced routine of cardio and strength to enhance fitness.';
+        } else {
+            // overweight
+            $message = 'You’re currently above the normal weight range. A combination of moderate cardio and strength training can help you gradually reduce excess weight.';
+        }
 
-    // Determine BMI category
-    $bmiCategory = '';
-    if ($bmi < 18.5) {
-        $bmiCategory = 'underweight';
-    } elseif ($bmi < 25) {
-        $bmiCategory = 'normal';
-    } else {
-        $bmiCategory = 'overweight';
-    }
+        // Adjust message and workout plan based on fitness goal
+        if ($fitnessGoal === 'lose_weight') {
+            $message .= ' Since you want to lose weight, prioritize moderate-intensity cardio and a well-structured strength routine that supports fat loss while preserving muscle.';
+            $weeklyPlan = [
+                'Monday' => '30 mins moderate cardio (jog, bike) + light core work',
+                'Tuesday' => 'Upper body strength (light to moderate weights, 8-12 reps)',
+                'Thursday' => '30 mins low-impact cardio (brisk walk, elliptical)',
+                'Friday' => 'Lower body strength (bodyweight squats, lunges, glute bridges)',
+            ];
+        } elseif ($fitnessGoal === 'build_muscle') {
+            $message .= ' Since you want to build muscle, focus on progressive strength training with a balance of compound exercises and adequate rest.';
+            $weeklyPlan = [
+                'Monday' => 'Upper body strength (bench press, rows, overhead press)',
+                'Wednesday' => 'Lower body strength (squats, deadlifts, lunges)',
+                'Friday' => 'Full body session (pull-ups, push-ups, hip thrusts)',
+            ];
+        } else {
+            // maintain_health
+            $message .= ' To maintain your current health, mix moderate cardio and full-body strength workouts evenly.';
+            $weeklyPlan = [
+                'Tuesday' => 'Light cardio (20-30 mins) + core exercises',
+                'Thursday' => 'Full body strength (moderate weights, 8-10 reps)',
+                'Saturday' => 'Yoga or pilates for flexibility and balance',
+            ];
+        }
 
-    // Retrieve user’s fitness goal if stored, or default to something
-    $fitnessGoal = $user->fitness_goal ?? 'maintain_health'; // e.g., 'lose_weight', 'build_muscle', 'maintain_health'
-
-    // Generate personalized recommendations based on BMI category and fitness goal
-    $recommendations = $this->generateRecommendations($bmiCategory, $fitnessGoal);
-
-    return view('gymplanning', compact('user', 'bmi', 'bmiCategory', 'fitnessGoal', 'recommendations'));
-}
-
-private function generateRecommendations($bmiCategory, $fitnessGoal)
-{
-    // This is a simplified logic. You can expand as needed.
-    $message = '';
-    $weeklyPlan = [];
-
-    // Base messages
-    if ($bmiCategory === 'underweight') {
-        $message = "You’re currently underweight. To improve strength and gain healthy weight, focus on controlled strength training and a slightly higher calorie intake.";
-    } elseif ($bmiCategory === 'normal') {
-        $message = "You’re at a healthy weight. Maintain a balanced routine of cardio and strength to enhance fitness.";
-    } else { // overweight
-        $message = "You’re currently above the normal weight range. A combination of moderate cardio and strength training can help you gradually reduce excess weight.";
-    }
-
-    // Adjust message and workout plan based on fitness goal
-    if ($fitnessGoal === 'lose_weight') {
-        $message .= " Since you want to lose weight, prioritize moderate-intensity cardio and a well-structured strength routine that supports fat loss while preserving muscle.";
-        $weeklyPlan = [
-            'Monday' => '30 mins moderate cardio (jog, bike) + light core work',
-            'Tuesday' => 'Upper body strength (light to moderate weights, 8-12 reps)',
-            'Thursday' => '30 mins low-impact cardio (brisk walk, elliptical)',
-            'Friday' => 'Lower body strength (bodyweight squats, lunges, glute bridges)',
+        return [
+            'message' => $message,
+            'weeklyPlan' => $weeklyPlan,
         ];
-    } elseif ($fitnessGoal === 'build_muscle') {
-        $message .= " Since you want to build muscle, focus on progressive strength training with a balance of compound exercises and adequate rest.";
-        $weeklyPlan = [
-            'Monday' => 'Upper body strength (bench press, rows, overhead press)',
-            'Wednesday' => 'Lower body strength (squats, deadlifts, lunges)',
-            'Friday' => 'Full body session (pull-ups, push-ups, hip thrusts)',
-        ];
-    } else {
-        // maintain_health
-        $message .= " To maintain your current health, mix moderate cardio and full-body strength workouts evenly.";
-        $weeklyPlan = [
-            'Tuesday' => 'Light cardio (20-30 mins) + core exercises',
-            'Thursday' => 'Full body strength (moderate weights, 8-10 reps)',
-            'Saturday' => 'Yoga or pilates for flexibility and balance',
-        ];
     }
 
-    return [
-        'message' => $message,
-        'weeklyPlan' => $weeklyPlan,
-    ];
-}
-
-public function updateFitnessGoal(Request $request)
+    public function updateFitnessGoal(Request $request)
     {
         $request->validate([
-            'fitness_goal' => 'required|in:lose_weight,build_muscle,maintain_health'
+            'fitness_goal' => 'required|in:lose_weight,build_muscle,maintain_health',
         ]);
 
         $user = User::find(Auth::id());
@@ -244,14 +244,14 @@ public function updateFitnessGoal(Request $request)
     {
         $user = Auth::user();
         // If not logged in, redirect to form
-    if (!$user) {
-        return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
-    }
+        if (!$user) {
+            return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
+        }
 
-    // If logged in but missing data
-    if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
-        return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
-    }
+        // If logged in but missing data
+        if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
+            return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
+        }
         $weight = $user->weight;
         $height = $user->height;
         $heightInMeters = $height / 100;
@@ -323,7 +323,7 @@ public function updateFitnessGoal(Request $request)
             'calories' => $calories,
             'macros' => $macros,
             'message' => $message,
-            'meals' => $mealSuggestions
+            'meals' => $mealSuggestions,
         ];
     }
 
@@ -335,21 +335,22 @@ public function updateFitnessGoal(Request $request)
                 'Breakfast' => ['Greek yogurt, berries, and whey protein shake', 'Egg white omelet with spinach'],
                 'Lunch' => ['Grilled chicken breast, quinoa, broccoli', 'Tuna salad with chickpeas and vegetables'],
                 'Dinner' => ['Salmon fillet with sweet potato and asparagus', 'Lean beef stir-fry with peppers and mushrooms'],
-                'Snacks' => ['Cottage cheese with pineapple', 'Protein bar or shake']
+                'Snacks' => ['Cottage cheese with pineapple', 'Protein bar or shake'],
             ];
         } elseif ($dietPreference === 'vegetarian') {
             return [
                 'Breakfast' => ['Oatmeal with almond butter and berries', 'Tofu scramble with spinach and tomatoes'],
                 'Lunch' => ['Quinoa bowl with black beans, avocado, and mixed veggies', 'Lentil soup with whole-grain bread'],
                 'Dinner' => ['Grilled tempeh with roasted vegetables and brown rice', 'Chickpea curry with spinach and whole-grain naan'],
-                'Snacks' => ['Hummus with carrot sticks', 'Apple slices with peanut butter']
+                'Snacks' => ['Hummus with carrot sticks', 'Apple slices with peanut butter'],
             ];
-        } else { // balanced
+        } else {
+            // balanced
             return [
                 'Breakfast' => ['Oatmeal with nuts and berries', 'Scrambled eggs with whole-grain toast'],
                 'Lunch' => ['Grilled chicken, sweet potato, mixed veggies', 'Turkey sandwich with avocado and side salad'],
                 'Dinner' => ['Salmon with brown rice and steamed broccoli', 'Lean beef stir-fry with bell peppers'],
-                'Snacks' => ['Greek yogurt with fruit', 'Apple with almond butter']
+                'Snacks' => ['Greek yogurt with fruit', 'Apple with almond butter'],
             ];
         }
     }
@@ -357,7 +358,7 @@ public function updateFitnessGoal(Request $request)
     public function updateMealPreference(Request $request)
     {
         $request->validate([
-            'diet_preference' => 'required|in:balanced,high_protein,vegetarian'
+            'diet_preference' => 'required|in:balanced,high_protein,vegetarian',
         ]);
 
         $user = User::find(Auth::id());
@@ -379,24 +380,22 @@ public function updateFitnessGoal(Request $request)
         // dump($query);
         // Build query params
         $params = [
-            'part'       => 'snippet',
-            'q'          => $query,
-            'type'       => 'video',
+            'part' => 'snippet',
+            'q' => $query,
+            'type' => 'video',
             'channelId' => $channelId,
-            'key'        => $apiKey,
+            'key' => $apiKey,
             'maxResults' => 9,
             'videoDuration' => 'medium',
             'order' => 'relevance',
-
         ];
 
         if (!empty($pageToken)) {
             $params['pageToken'] = $pageToken;
         }
 
-
-// dd($response->status(), $response->body());
-// dump($apiKey);
+        // dd($response->status(), $response->body());
+        // dump($apiKey);
 
         if (!empty($query)) {
             $params['q'] = $query;
@@ -404,94 +403,93 @@ public function updateFitnessGoal(Request $request)
         if (!empty($category)) {
             // If query already exists, append category to it for a more specific search
             // If no query, just use category alone as a search term
-            $params['q'] = !empty($query) ? ($query . ' ' . $category) : $category;
+            $params['q'] = !empty($query) ? $query . ' ' . $category : $category;
         }
         // dump($category);
 
         $searchResponse = Http::get('https://www.googleapis.com/youtube/v3/search', $params);
 
-    if ($searchResponse->failed()) {
-        Log::error('YouTube API Error', [
-            'status' => $searchResponse->status(),
-            'body' => $searchResponse->body(),
-        ]);
-        return view('onlinecoaching', [
-            'videos' => [],
-            'query' => $query,
-            'category' => $category,
-            'nextPageToken' => null,
-            'prevPageToken' => null,
-        ]);
-    }
-
-    $data = $searchResponse->json();
-
-    $nextPageToken = $data['nextPageToken'] ?? null;
-    $prevPageToken = $data['prevPageToken'] ?? null;
-
-    $videoIds = [];
-    if (isset($data['items'])) {
-        foreach ($data['items'] as $item) {
-            $videoIds[] = $item['id']['videoId'];
+        if ($searchResponse->failed()) {
+            Log::error('YouTube API Error', [
+                'status' => $searchResponse->status(),
+                'body' => $searchResponse->body(),
+            ]);
+            return view('onlinecoaching', [
+                'videos' => [],
+                'query' => $query,
+                'category' => $category,
+                'nextPageToken' => null,
+                'prevPageToken' => null,
+            ]);
         }
-    }
 
-    if (empty($videoIds)) {
-        // No videos found, just return empty
-        return view('onlinecoaching', [
-            'videos' => [],
-            'query' => $query,
-            'category' => $category,
-            'nextPageToken' => $nextPageToken,
-            'prevPageToken' => $prevPageToken,
-        ]);
-    }
+        $data = $searchResponse->json();
 
-    // 2. Fetch video details to get durations
-    $videosParams = [
-        'part' => 'snippet,contentDetails',
-        'id' => implode(',', $videoIds),
-        'key' => $apiKey,
-    ];
+        $nextPageToken = $data['nextPageToken'] ?? null;
+        $prevPageToken = $data['prevPageToken'] ?? null;
 
-    $videosResponse = Http::get('https://www.googleapis.com/youtube/v3/videos', $videosParams);
-    if ($videosResponse->failed()) {
-        Log::error('YouTube API Error (videos)', [
-            'status' => $videosResponse->status(),
-            'body' => $videosResponse->body(),
-        ]);
-        return view('onlinecoaching', [
-            'videos' => [],
-            'query' => $query,
-            'category' => $category,
-            'nextPageToken' => $nextPageToken,
-            'prevPageToken' => $prevPageToken,
-        ]);
-    }
+        $videoIds = [];
+        if (isset($data['items'])) {
+            foreach ($data['items'] as $item) {
+                $videoIds[] = $item['id']['videoId'];
+            }
+        }
 
-    $videosData = $videosResponse->json();
+        if (empty($videoIds)) {
+            // No videos found, just return empty
+            return view('onlinecoaching', [
+                'videos' => [],
+                'query' => $query,
+                'category' => $category,
+                'nextPageToken' => $nextPageToken,
+                'prevPageToken' => $prevPageToken,
+            ]);
+        }
 
+        // 2. Fetch video details to get durations
+        $videosParams = [
+            'part' => 'snippet,contentDetails',
+            'id' => implode(',', $videoIds),
+            'key' => $apiKey,
+        ];
 
-    $filteredVideos = [];
-    if (isset($videosData['items'])) {
-        foreach ($videosData['items'] as $videoItem) {
+        $videosResponse = Http::get('https://www.googleapis.com/youtube/v3/videos', $videosParams);
+        if ($videosResponse->failed()) {
+            Log::error('YouTube API Error (videos)', [
+                'status' => $videosResponse->status(),
+                'body' => $videosResponse->body(),
+            ]);
+            return view('onlinecoaching', [
+                'videos' => [],
+                'query' => $query,
+                'category' => $category,
+                'nextPageToken' => $nextPageToken,
+                'prevPageToken' => $prevPageToken,
+            ]);
+        }
+
+        $videosData = $videosResponse->json();
+
+        $filteredVideos = [];
+        if (isset($videosData['items'])) {
+            foreach ($videosData['items'] as $videoItem) {
                 $filteredVideos[] = [
-                    'title'       => html_entity_decode($videoItem['snippet']['title']),
-                    'thumbnail'   => $videoItem['snippet']['thumbnails']['medium']['url'] ?? '',
-                    'videoId'     => $videoItem['id'],
+                    'title' => html_entity_decode($videoItem['snippet']['title']),
+                    'thumbnail' => $videoItem['snippet']['thumbnails']['medium']['url'] ?? '',
+                    'videoId' => $videoItem['id'],
                     'description' => Str::limit(html_entity_decode($videoItem['snippet']['description']), 100, '...'),
-                    'publishedAt' => $videoItem['snippet']['publishedAt']
+                    'publishedAt' => $videoItem['snippet']['publishedAt'],
                 ];
             }
         }
 
-    $filteredVideos = array_slice($filteredVideos, 0, 9);
-    return view('onlinecoaching', [
-        'query' => $request->input('query', ''),
-        'category' => $request->input('category', ''),
-        'videos' => $filteredVideos,
-        'nextPageToken' => $nextPageToken,
-        'prevPageToken' => $prevPageToken,
-    ]);
+        $filteredVideos = array_slice($filteredVideos, 0, 9);
+        return view('onlinecoaching', [
+            'query' => $request->input('query', ''),
+            'category' => $request->input('category', ''),
+            'videos' => $filteredVideos,
+            'nextPageToken' => $nextPageToken,
+            'prevPageToken' => $prevPageToken,
+        ]);
     }
 }

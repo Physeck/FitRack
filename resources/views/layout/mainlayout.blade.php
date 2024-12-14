@@ -12,7 +12,7 @@
     <link rel="icon" href="{{ asset('images/fitrack_favicon.png') }}" type="image/x-icon">
 </head>
 
-<body style="background-color: #000000 !important;">
+<body>
     <div class="min-vh-100">
         <nav class="navbar navbar-expand-lg navbar-light " style="background-color: #424549;">
             <div class="container-fluid">
