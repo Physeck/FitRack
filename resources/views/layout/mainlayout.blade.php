@@ -50,7 +50,7 @@
                                 <a href="/profile">
                                     <img src="{{ Auth::user()->profile_picture ?: asset('images/defaultpfp.png')}}"
                                         alt="Profile Picture" class="rounded-circle"
-                                        style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border: 1px solid black">
+                                        style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border: 1.5px solid #f97000">
 
                                 </a>
 
