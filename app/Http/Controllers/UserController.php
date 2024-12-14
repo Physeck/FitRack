@@ -26,7 +26,7 @@ class UserController extends Controller
         ]);
 
                 $file = $request->file('profile_picture');
-                $filename = time() . '_' . $file->getClientOriginalName();
+                $fileName = time() . '_' . $file->getClientOriginalName();
                 $fileContents = file_get_contents($file->getRealPath());
 
 
