@@ -2,14 +2,14 @@
 @section('title', 'Prompt User Data')
 
 @section('content')
-<div class="container mt-4 mb-4 w-50">
-    <h1>Please Provide Your Details</h1>
-    <form action="{{ route('handle_user_data') }}" method="POST">
+<div class="container mt-4 mb-4 w-50 grid-bg">
+    <h1 style="color: #fff">Please Provide Your Details</h1>
+    <form action="{{ route('handle_user_data') }}" method="POST" style="color: #fff">
         @csrf
         <input type="hidden" name="redirect" value="{{ $redirect }}">
 
-        <div class="mb-3">
-            <label for="height" class="form-label">Height (cm)</label>
+        <div class="mb-3" >
+            <label for="height" class="form-label" >Height (cm)</label>
             <input type="number" name="height" id="height" class="form-control" required min="1" value="{{ old('height') }}">
         </div>
 
