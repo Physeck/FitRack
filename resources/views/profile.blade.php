@@ -5,7 +5,7 @@
 
     <div class="container py-5">
         <div class="d-flex align-items-center pb-5">
-            <img src="{{ Auth::user()->profile_picture ? asset('uploads/' . Auth::user()->profile_picture) : asset('images/defaultpfp.png') }}"
+            <img src="{{ Auth::user()->profile_picture ?: asset('images/defaultpfp.png') }}"
                 alt="Profile Picture" class="rounded-circle"
                 style="width: 175px; height: 175px; object-fit: cover; margin-right: 10px; border: 1px solid black">
             <div>

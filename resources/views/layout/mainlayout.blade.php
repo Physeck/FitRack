@@ -48,7 +48,7 @@
                             <div class="d-flex align-items-center">
                                 <span class="navbar-text me-3 text-white">{{ Auth::user()->name }}</span>
                                 <a href="/profile">
-                                    <img src="{{ Auth::user()->profile_picture ? asset('uploads/' . Auth::user()->profile_picture) : asset('images/defaultpfp.png') }}"
+                                    <img src="{{ Auth::user()->profile_picture ?: asset('images/defaultpfp.png')}}"
                                         alt="Profile Picture" class="rounded-circle"
                                         style="width: 40px; height: 40px; object-fit: cover; margin-right: 10px; border: 1px solid black">
 
