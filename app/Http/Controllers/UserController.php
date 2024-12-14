@@ -58,8 +58,8 @@ class UserController extends Controller
 
                     return redirect()->back()->with('success', 'Profile picture updated successfully.');
                 } else {
-                    logger('Vercel Blob Upload Error:', $uploadResponse->json());
-                    return redirect()->back()->with('error', 'Failed to upload profile picture to Vercel Blob. Error: ' . $uploadResponse->body());
+                    logger('Vercel Blob Upload Error:', $response->json());
+                    return redirect()->back()->with('error', 'Failed to upload profile picture to Vercel Blob. Error: ' . $response->body());
                 }
 
             } catch (\Exception $e) {
