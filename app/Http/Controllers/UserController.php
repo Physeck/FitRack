@@ -51,7 +51,7 @@ class UserController extends Controller
         // Save the new profile picture URL to the user's profile
         $user->profile_picture = $url;
         $user->save();
-
+        return redirect()->back()->with('success', 'Profile picture updated successfully!');
             } catch (\Exception $e) {
                 return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error: ' . $e->getMessage());
             }
