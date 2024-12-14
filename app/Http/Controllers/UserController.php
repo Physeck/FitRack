@@ -37,7 +37,7 @@ class UserController extends Controller
                     'Content-Type' => $file->getMimeType(),
                 ])->post($endpoint, [
                     'file' => base64_encode($fileContents),
-                    'fileName' => $fileName,
+                    'fileName' => $filename,
                 ]);
 
                 if ($response->successful()) {
