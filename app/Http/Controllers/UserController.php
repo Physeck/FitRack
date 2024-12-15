@@ -127,7 +127,7 @@ class UserController extends Controller
         $request->validate([
             'height' => 'required|numeric|min:1',
             'weight' => 'required|numeric|min:1',
-            'gender' => 'required|in:male,female,other',
+            'gender' => 'required|in:male,female',
         ]);
 
         $height = $request->input('height');

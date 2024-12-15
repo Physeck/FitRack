@@ -20,12 +20,18 @@ class PlanningMiddleWare
         // Check if the user is not logged in
         $user = User::find(Auth::id());
 
+        // Allow logged-out users to see `prompt_user_data`
+        if ($request->route()->getName() === 'prompt_user_data') {
+            return $next($request);
+        }
+
         if ($user && ($user->height == 0 || $user->weight == 0 || !$user->gender)) {
             return redirect()->route('prompt_user_data', ['redirect' => $request->path()]);
         }
 
+        // If user is not logged in, allow access to the prompt but enforce login later
         if (!$user) {
-            return redirect()->route('signup')->with('error', 'Please sign up or sign in to continue.');
+            return redirect()->route('prompt_user_data', ['redirect' => $request->path()]);
         }
 
         // If user is authenticated, allow to proceed
