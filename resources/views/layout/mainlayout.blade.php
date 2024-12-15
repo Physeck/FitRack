@@ -23,7 +23,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="w-100" id="navbarNav">
+                <div class="w-100 d-flex justify-content-between" id="navbarNav">
                     <a class="navbar-brand user-select-none" style="color: white;">
                         <span class="fw-bold" style="color: #f97000;">Fit</span><span style="color: whitesmoke;">Rack</span>
                     </a>
