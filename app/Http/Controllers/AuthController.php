@@ -28,7 +28,22 @@ class AuthController extends Controller
         $rememberme = $request->has('remember');
 
         if (Auth::attempt(['email' => $validate['email'], 'password' => $validate['password']], $rememberme)) {
-            return redirect()->intended('/');
+            $user = Auth::user();
+
+            // Check for temp session data and apply it
+            if (session()->has('temp_height') && session()->has('temp_weight') && session()->has('temp_gender')) {
+                $user->height = session('temp_height');
+                $user->weight = session('temp_weight');
+                $user->gender = session('temp_gender');
+                $user->save();
+
+                // Clear temp session data
+                session()->forget(['temp_height', 'temp_weight', 'temp_gender']);
+            }
+            // Redirect to the intended route or default to home
+            $redirect = session('intended_redirect', '/');
+            session()->forget('intended_redirect'); // Clear the intended redirect
+            return redirect($redirect);
         } else {
             return back()->withErrors(['email' => 'User Email or Password is Wrong']);
         }
@@ -53,7 +68,20 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        return redirect('/');
+        if (session()->has('temp_height') && session()->has('temp_weight') && session()->has('temp_gender')) {
+            $user->height = session('temp_height');
+            $user->weight = session('temp_weight');
+            $user->gender = session('temp_gender');
+            $user->save();
+
+            // Clear temp session data
+            session()->forget(['temp_height', 'temp_weight', 'temp_gender']);
+        }
+
+        // Redirect to the intended route or default to home
+        $redirect = session('intended_redirect', '/');
+        session()->forget('intended_redirect'); // Clear the intended redirect
+        return redirect($redirect);
     }
 
     public function signout(Request $request)
@@ -64,23 +92,4 @@ class AuthController extends Controller
         return redirect('/signin');
     }
 
-    protected function authenticated(Request $request, $user)
-    {
-        if (session()->has('temp_height') && session()->has('temp_weight') && session()->has('temp_gender')) {
-            $user->height = session('temp_height');
-            $user->weight = session('temp_weight');
-            $user->gender = session('temp_gender');
-            $user->save();
-
-            // Clear the temp data
-            session()->forget(['temp_height', 'temp_weight', 'temp_gender']);
-
-            // Redirect to intended page
-            $redirect = session('intended_redirect', 'gymplanning');
-            session()->forget('intended_redirect');
-            return redirect()->route($redirect);
-        }
-
-        return redirect()->intended('gymplanning');
-    }
 }
