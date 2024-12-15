@@ -7,7 +7,7 @@
         <div class="d-flex align-items-center pb-5">
             <img src="{{ Auth::user()->profile_picture ?: asset('images/defaultpfp.png') }}"
                 alt="Profile Picture" class="rounded-circle"
-                style="width: 175px; height: 175px; object-fit: cover; margin-right: 10px; border: 1.5px solid #f97000">
+                style="width: 175px; height: 175px; object-fit: cover; margin-right: 10px; border: 2px solid #f97000">
             <div>
                 <h2 class="text-white">{{ Auth::user()->name }}</h2>
             </div>

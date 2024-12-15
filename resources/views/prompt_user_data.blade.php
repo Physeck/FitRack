@@ -27,7 +27,7 @@
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Continue</button>
+        <button type="submit" class="btn btn-orange">Continue</button>
     </form>
 </div>
 @endsection
