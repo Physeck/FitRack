@@ -141,27 +141,25 @@ class UserController extends Controller
             $user->weight = $weight;
             $user->gender = $gender;
             $user->save();
-            return redirect()->route($redirect);
+
         } else {
             // User not logged in, store in session and then redirect to login
             session([
                 'temp_height' => $height,
                 'temp_weight' => $weight,
                 'temp_gender' => $gender,
-                'intended_redirect' => $redirect,
             ]);
-
-            return redirect()->route('login')->with('status', 'Please login or register to save your data.');
         }
+        return redirect()->route($redirect);
     }
 
     public function showGymPlanner()
     {
         $user = User::find(Auth::id());
         // If not logged in, redirect to form
-        if (!$user) {
-            return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
-        }
+        // if (!$user) {
+        //     return redirect()->route('prompt_user_data', ['redirect' => 'gymplanning']);
+        // }
 
         // If logged in but missing data
         if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
@@ -268,11 +266,11 @@ class UserController extends Controller
 
     public function showMealPlanner()
     {
-        $user = Auth::user();
+        $user = User::find(Auth::id());
         // If not logged in, redirect to form
-        if (!$user) {
-            return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
-        }
+        // if (!$user) {
+        //     return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
+        // }
 
         // If logged in but missing data
         if ($user->weight == 0 || $user->height == 0 || !$user->gender) {

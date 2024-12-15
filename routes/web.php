@@ -24,18 +24,6 @@ Route::get('/aboutus', function () {
     return view('aboutus');
 });
 
-// Route::get('/onlinecoaching', function () {
-//     return view('onlinecoaching');
-// });
-
-// Route::get('/mealplanning', function () {
-//     return view('mealplanning');
-// });
-
-// Route::get('/gymplanning', function () {
-//     return view('gymplanning');
-// });
-
 Route::get('/profile', function () {
     return view('profile');
 });
@@ -45,13 +33,18 @@ Route::post('/profile/verifyPassword', [UserController::class, 'verifyPassword']
 Route::post('/profile/updatePassword', [UserController::class, 'updatePassword'])->name('profile.updatePassword');
 
 Route::post('/update_fitness_goal', [UserController::class, 'updateFitnessGoal'])->name('update_fitness_goal');
-Route::get('/gymplanning', [UserController::class, 'showGymPlanner'])->name('gymplanning');
-    Route::get('/mealplanning', [UserController::class, 'showMealPlanner'])->name('mealplanning');
+Route::get('/gymplanning', [UserController::class, 'showGymPlanner'])->name('gymplanning')->middleware('ensure.planning.auth');;
+Route::get('/mealplanning', [UserController::class, 'showMealPlanner'])->name('mealplanning')->middleware('ensure.planning.auth');;
 Route::post('/update_meal_preference', [UserController::class, 'updateMealPreference'])->name('update_meal_preference');
 Route::get('/onlinecoaching', [UserController::class, 'searchVideos'])->name('onlinecoaching');
 
 // Public routes to handle input
 Route::get('/prompt-user-data', [UserController::class, 'showForm'])->name('prompt_user_data');
 Route::post('/prompt-user-data', [UserController::class, 'handleForm'])->name('handle_user_data');
+
+protected $routeMiddleware = [
+    // Other middleware...
+    'ensure.planning.auth' => \App\Http\Middleware\PlanningMiddleWare::class,
+];
 
 
