@@ -17,51 +17,49 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    public function editProfile(Request $request)
-{
-    try {
-        // Validate the uploaded file
-        $request->validate([
-            'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
-        $user = User::find(Auth::id());
-        if ($user->profile_picture) {
-            // Extract the file path from the profile picture URL
-            $oldFilePath = parse_url($user->profile_picture, PHP_URL_PATH);
-            $oldFilePath = ltrim($oldFilePath, '/'); // Remove leading slash if present
+    public function editProfile(Request $request){
+        try {
+            // Validate the uploaded file
+            $request->validate([
+                'profile_picture' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            ]);
+            $user = User::find(Auth::id());
+            if ($user->profile_picture) {
+                // Extract the file path from the profile picture URL
+                $oldFilePath = parse_url($user->profile_picture, PHP_URL_PATH);
+                $oldFilePath = ltrim($oldFilePath, '/'); // Remove leading slash if present
 
-            // Delete the old profile picture from S3
-            if (Storage::disk('s3')->exists($oldFilePath)) {
-                Storage::disk('s3')->delete($oldFilePath);
+                // Delete the old profile picture from S3
+                if (Storage::disk('s3')->exists($oldFilePath)) {
+                    Storage::disk('s3')->delete($oldFilePath);
+                }
             }
-        }
 
-        // Get the uploaded file
-        $file = $request->file('profile_picture');
+            // Get the uploaded file
+            $file = $request->file('profile_picture');
 
-        // Generate a unique file name
-        $fileName = 'profile_pictures/' . time() . '_' . $file->getClientOriginalName();
+            // Generate a unique file name
+            $fileName = 'profile_pictures/' . time() . '_' . $file->getClientOriginalName();
 
-        // Upload the new profile picture to S3
-        $result = Storage::disk('s3')->put($fileName, file_get_contents($file->getRealPath()), 'public');
-        if (!$result) {
-            return redirect()->back()->with('error','Failed to upload the file to S3.');
-        }
-
-        // Get the public URL for the uploaded file
-        $url = Storage::disk('s3')->url($fileName);
-
-        // Save the new profile picture URL to the user's profile
-        $user->profile_picture = $url;
-        $user->save();
-        return redirect()->back()->with('success', 'Profile picture updated successfully!');
-            } catch (\Exception $e) {
-                return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error: ' . $e->getMessage());
+            // Upload the new profile picture to S3
+            $result = Storage::disk('s3')->put($fileName, file_get_contents($file->getRealPath()), 'public');
+            if (!$result) {
+                return redirect()->back()->with('error','Failed to upload the file to S3.');
             }
+
+            // Get the public URL for the uploaded file
+            $url = Storage::disk('s3')->url($fileName);
+
+            // Save the new profile picture URL to the user's profile
+            $user->profile_picture = $url;
+            $user->save();
+            return redirect()->back()->with('success', 'Profile picture updated successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update profile picture. Please try again. Error: ' . $e->getMessage());
+        }
     }
 
-    public function verifyPassword(Request $request)
-    {
+    public function verifyPassword(Request $request){
         $request->validate([
             'password' => 'required|string|min:8',
         ]);
@@ -73,8 +71,7 @@ class UserController extends Controller
         }
     }
 
-    public function updatePassword(Request $request)
-    {
+    public function updatePassword(Request $request){
         $request->validate([
             'newPassword' => 'required|string|min:8',
         ]);
@@ -86,8 +83,7 @@ class UserController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-    public function updateProfilePage(Request $request)
-    {
+    public function updateProfilePage(Request $request){
         try {
             $request->validate([
                 'height' => 'nullable|integer|max:250',
@@ -107,8 +103,7 @@ class UserController extends Controller
         }
     }
 
-    public function showForm(Request $request)
-    {
+    public function showForm(Request $request){
         // If logged in and user already has data, redirect to original page
         $user = User::find(Auth::id());
         if ($user) {
@@ -122,8 +117,7 @@ class UserController extends Controller
         ]);
     }
 
-    public function handleForm(Request $request)
-    {
+    public function handleForm(Request $request){
         $request->validate([
             'height' => 'required|numeric|min:1',
             'weight' => 'required|numeric|min:1',
@@ -157,8 +151,7 @@ class UserController extends Controller
 
     }
 
-    public function showGymPlanner()
-    {
+    public function showGymPlanner(){
         $user = User::find(Auth::id());
 
         $weight = $user->weight; // kg
@@ -179,8 +172,7 @@ class UserController extends Controller
         return view('gymplanning', compact('user', 'bmi', 'bmiCategory', 'fitnessGoal', 'recommendations'));
     }
 
-    private function generateRecommendations($bmiCategory, $fitnessGoal)
-    {
+    private function generateRecommendations($bmiCategory, $fitnessGoal){
         $message = '';
         $weeklyPlan = [];
 
@@ -236,8 +228,7 @@ class UserController extends Controller
         ];
     }
 
-    public function updateFitnessGoal(Request $request)
-    {
+    public function updateFitnessGoal(Request $request){
         $request->validate([
             'fitness_goal' => 'required|in:lose_weight,build_muscle,maintain_health',
         ]);
@@ -249,8 +240,7 @@ class UserController extends Controller
         return redirect()->back()->with('status', 'Fitness goal updated successfully!');
     }
 
-    public function calculateCalories()
-    {
+    public function calculateCalories(){
         $user = User::find(Auth::id());
 
         // Ensure user data is available
@@ -286,8 +276,7 @@ class UserController extends Controller
         return round($calories); // Return the final calorie target
     }
 
-    private function determineBMICategory($bmi)
-    {
+    private function determineBMICategory($bmi){
         if ($bmi < 18.5) {
             return 'underweight';
         } elseif ($bmi >= 18.5 && $bmi < 25) {
@@ -297,8 +286,7 @@ class UserController extends Controller
         }
     }
 
-    public function showMealPlanner()
-    {
+    public function showMealPlanner(){
         $user = User::find(Auth::id());
         $weight = $user->weight;
         $height = $user->height;
@@ -318,8 +306,7 @@ class UserController extends Controller
         return view('mealplanning', compact('user', 'bmi', 'bmiCategory', 'fitnessGoal', 'dietPreference', 'recommendations'));
     }
 
-    private function generateMealRecommendations($bmiCategory, $fitnessGoal, $dietPreference)
-    {
+    private function generateMealRecommendations($bmiCategory, $fitnessGoal, $dietPreference){
         $calories = $this->calculateCalories();
 
         // macronutrient
@@ -354,8 +341,7 @@ class UserController extends Controller
         ];
     }
 
-    private function getMealSuggestions($dietPreference)
-    {
+    private function getMealSuggestions($dietPreference){
         if ($dietPreference === 'high_protein') {
             return [
                 'Breakfast' => ['Greek yogurt, berries, and whey protein shake', 'Egg white omelet with spinach'],
@@ -381,8 +367,7 @@ class UserController extends Controller
         }
     }
 
-    public function updateMealPreference(Request $request)
-    {
+    public function updateMealPreference(Request $request){
         $request->validate([
             'diet_preference' => 'required|in:balanced,high_protein,vegetarian',
         ]);
@@ -394,8 +379,7 @@ class UserController extends Controller
         return redirect()->back()->with('status', 'Meal preference updated successfully!');
     }
 
-    public function searchVideos(Request $request)
-    {
+    public function searchVideos(Request $request){
         $query = $request->input('query', '');
         $category = $request->input('category', '');
         $pageToken = $request->input('pageToken', '');
