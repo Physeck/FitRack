@@ -1,3 +1,4 @@
+
 <?php
 
 namespace App\Http\Controllers;
@@ -16,7 +17,6 @@ use Illuminate\Support\Str;
 
 class UserController extends Controller
 {
-    //test
     public function editProfile(Request $request)
 {
     try {
@@ -168,17 +168,10 @@ class UserController extends Controller
         $bmi = round($bmi, 1);
 
         // Determine BMI category
-        $bmiCategory = '';
-        if ($bmi < 18.5) {
-            $bmiCategory = 'underweight';
-        } elseif ($bmi < 25) {
-            $bmiCategory = 'normal';
-        } else {
-            $bmiCategory = 'overweight';
-        }
+        $bmiCategory = $this->determineBMICategory($bmi);
 
-        // Retrieve user’s fitness goal if stored, or default to something
-        $fitnessGoal = $user->fitness_goal ?? 'maintain_health'; // e.g., 'lose_weight', 'build_muscle', 'maintain_health'
+        // Retrieve user’s fitness goal if stored
+        $fitnessGoal = $user->fitness_goal ?? 'maintain_health';
 
         // Generate personalized recommendations based on BMI category and fitness goal
         $recommendations = $this->generateRecommendations($bmiCategory, $fitnessGoal);
@@ -188,7 +181,6 @@ class UserController extends Controller
 
     private function generateRecommendations($bmiCategory, $fitnessGoal)
     {
-        // This is a simplified logic. You can expand as needed.
         $message = '';
         $weeklyPlan = [];
 
@@ -202,11 +194,10 @@ class UserController extends Controller
             $message = 'You’re currently above the normal weight range. A combination of moderate cardio and strength training can help you gradually reduce excess weight.';
         }
 
-        // Adjust message and workout plan based on fitness goal
         if ($fitnessGoal === 'lose_weight') {
             $message .= ' Since you want to lose weight, prioritize moderate-intensity cardio and a well-structured strength routine that supports fat loss while preserving muscle.';
             $weeklyPlan = [
-                'Monday' => '30 mins moderate cardio (jog, bike) + light core work',
+            'Monday' => '30 mins moderate cardio (jog, bike) + light core work',
             'Tuesday' => 'Upper body strength (light to moderate weights, 8-12 reps)',
             'Wednesday' => 'Yoga or active recovery (light stretching, short walk)',
             'Thursday' => '30 mins low-impact cardio (brisk walk, elliptical)',
@@ -253,24 +244,62 @@ class UserController extends Controller
 
         $user = User::find(Auth::id());
         $user->fitness_goal = $request->input('fitness_goal');
-        $user = User::find(Auth::id());
         $user->save();
 
         return redirect()->back()->with('status', 'Fitness goal updated successfully!');
     }
 
+    public function calculateCalories()
+    {
+        $user = User::find(Auth::id());
+
+        // Ensure user data is available
+        if (!$user->weight || !$user->height || !$user->gender) {
+            return redirect()->route('prompt_user_data')->with('error', 'Please complete your profile to calculate calories.');
+        }
+
+        // Calculate BMR
+        $bmr = 0;
+        if ($user->gender === 'male') {
+            $bmr = (10 * $user->weight) + (6.25 * $user->height) + 5;
+        } elseif ($user->gender === 'female') {
+            $bmr = (10 * $user->weight) + (6.25 * $user->height) - 161;
+        }
+
+        $bmi = $user->weight / pow($user->height / 100, 2);
+        $bmiCategory = $this->determineBMICategory($bmi);
+
+        if ($bmiCategory === 'underweight') {
+            $bmr += 300; // Increase calories for underweight
+        } elseif ($bmiCategory === 'overweight') {
+            $bmr -= 300; // Decrease calories for overweight
+        }
+
+        // Adjust for fitness goal
+        $calories = $bmr;
+        if ($user->fitness_goal === 'lose_weight') {
+            $calories -= 200; // Create a calorie deficit
+        } elseif ($user->fitness_goal === 'build_muscle') {
+            $calories += 200; // Create a calorie surplus
+        }
+
+        return round($calories); // Return the final calorie target
+    }
+
+    private function determineBMICategory($bmi)
+    {
+        if ($bmi < 18.5) {
+            return 'underweight';
+        } elseif ($bmi >= 18.5 && $bmi < 25) {
+            return 'normal';
+        } else {
+            return 'overweight';
+        }
+    }
+
     public function showMealPlanner()
     {
         $user = User::find(Auth::id());
-        // If not logged in, redirect to form
-        // if (!$user) {
-        //     return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
-        // }
-
-        // If logged in but missing data
-        if ($user->weight == 0 || $user->height == 0 || !$user->gender) {
-            return redirect()->route('prompt_user_data', ['redirect' => 'mealplanning']);
-        }
         $weight = $user->weight;
         $height = $user->height;
         $heightInMeters = $height / 100;
@@ -278,16 +307,8 @@ class UserController extends Controller
         $bmi = round($bmi, 1);
 
         // Determine BMI category
-        $bmiCategory = '';
-        if ($bmi < 18.5) {
-            $bmiCategory = 'underweight';
-        } elseif ($bmi < 25) {
-            $bmiCategory = 'normal';
-        } else {
-            $bmiCategory = 'overweight';
-        }
+        $bmiCategory = $this->determineBMICategory($bmi);
 
-        // Assume we have the user's fitness_goal already stored (from previous step)
         $fitnessGoal = $user->fitness_goal ?? 'maintain_health';
         $dietPreference = $user->diet_preference ?? 'balanced';
 
@@ -299,22 +320,9 @@ class UserController extends Controller
 
     private function generateMealRecommendations($bmiCategory, $fitnessGoal, $dietPreference)
     {
-        // Base maintenance calories (very rough estimate)
-        // Adjust based on BMI category and goals
-        $baseCalories = 2000;
-        if ($fitnessGoal === 'lose_weight') {
-            $calories = $baseCalories - 200; // slight deficit
-        } elseif ($fitnessGoal === 'build_muscle') {
-            $calories = $baseCalories + 200; // slight surplus
-        } else {
-            $calories = $baseCalories; // maintenance
-        }
+        $calories = $this->calculateCalories();
 
-        // Adjust macronutrient focus based on diet preference and goals
-        // For simplicity:
-        // balanced: roughly 30% protein, 40% carbs, 30% fat
-        // high_protein: 40% protein, 30% carbs, 30% fat
-        // vegetarian: 30% protein (plant-based), 45% carbs, 25% fat
+        // macronutrient
         $macros = [
             'protein' => '30%',
             'carbs' => '40%',
@@ -331,7 +339,7 @@ class UserController extends Controller
             $macros['fat'] = '25%';
         }
 
-        // Suggest simple meals based on diet preference
+        // Suggest smeals based on diet preference
         $mealSuggestions = $this->getMealSuggestions($dietPreference);
 
         // Personalized message
@@ -348,7 +356,6 @@ class UserController extends Controller
 
     private function getMealSuggestions($dietPreference)
     {
-        // Basic examples. In reality, you might have a database of recipes.
         if ($dietPreference === 'high_protein') {
             return [
                 'Breakfast' => ['Greek yogurt, berries, and whey protein shake', 'Egg white omelet with spinach'],
@@ -396,7 +403,6 @@ class UserController extends Controller
         $channelId = 'UCeJFgNahi--FKs0oJyeRDEw';
 
         $url = 'https://www.googleapis.com/youtube/v3/search';
-        // dump($query);
         // Build query params
         $params = [
             'part' => 'snippet',
@@ -413,14 +419,11 @@ class UserController extends Controller
             $params['pageToken'] = $pageToken;
         }
 
-        // dd($response->status(), $response->body());
-        // dump($apiKey);
-
         if (!empty($query)) {
             $params['q'] = $query;
         }
         if (!empty($category)) {
-            // If query already exists, append category to it for a more specific search
+            // If query already exists, append category to it
             // If no query, just use category alone as a search term
             $params['q'] = !empty($query) ? $query . ' ' . $category : $category;
         }
@@ -465,7 +468,7 @@ class UserController extends Controller
             ]);
         }
 
-        // 2. Fetch video details to get durations
+        // Fetch video details
         $videosParams = [
             'part' => 'snippet,contentDetails',
             'id' => implode(',', $videoIds),
