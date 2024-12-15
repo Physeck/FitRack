@@ -26,21 +26,21 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
+                    <ul class="ps-4 navbar-nav d-flex justify-content-between w-75 fw-bold">
                         <li class="nav-item">
-                            <a class="nav-link" href="/">Home</a>
+                            <a class="nav-link text-center" href="/">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/gymplanning">Workout Plan</a>
+                            <a class="nav-link text-center" href="/gymplanning">Workout Plan</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/mealplanning">Meal Planning</a>
+                            <a class="nav-link text-center" href="/mealplanning">Meal Planning</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/onlinecoaching">Online Trainer</a>
+                            <a class="nav-link text-center" href="/onlinecoaching">Online Trainer</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/aboutus">About Us</a>
+                            <a class="nav-link text-center" href="/aboutus">About Us</a>
                         </li>
                     </ul>
                     <div class="ms-auto">
@@ -73,6 +73,9 @@
                 </div>
             </div>
         </nav>
+
+
+
 
         <div style="min-height: 96vh;">
             @yield('content')
